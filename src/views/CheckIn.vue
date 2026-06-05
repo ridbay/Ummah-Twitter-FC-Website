@@ -3,12 +3,12 @@ import { ref, reactive } from 'vue'
 import { supabase } from '../lib/supabase.js'
 import { jsPDF } from 'jspdf'
 
-const form = reactive({ name: '', twitter: '', email: '', role: 'Fan' })
+const form = reactive({ name: '', twitter: '', email: '', role: 'Fan', supporting: 'Neutral' })
 const state = ref('idle') // idle | loading | success | error
 const errorMsg = ref('')
 const successName = ref('')
 
-const ticketInfo = reactive({ name: '', role: '', ticketId: '', twitter: '' })
+const ticketInfo = reactive({ name: '', role: '', ticketId: '', twitter: '', supporting: 'Neutral' })
 
 async function handleSubmit() {
   if (!form.name.trim())  return setError('Please enter your full name.')
@@ -20,10 +20,11 @@ async function handleSubmit() {
   const twitter = form.twitter.trim().replace(/^@+/, '')
 
   const { data, error } = await supabase.from('checkins').insert({
-    name:    form.name.trim(),
-    twitter: twitter ? `@${twitter}` : null,
-    email:   form.email.trim().toLowerCase(),
-    role:    form.role,
+    name:       form.name.trim(),
+    twitter:    twitter ? `@${twitter}` : null,
+    email:      form.email.trim().toLowerCase(),
+    role:       form.role,
+    supporting: form.supporting,
   }).select()
 
   if (error) {
@@ -40,6 +41,7 @@ async function handleSubmit() {
   ticketInfo.name = form.name.trim()
   ticketInfo.role = form.role
   ticketInfo.twitter = twitter ? `@${twitter}` : ''
+  ticketInfo.supporting = form.supporting
   ticketInfo.ticketId = `UM-${uniqueSuffix}`
 
   successName.value = form.name.trim().split(' ')[0]
@@ -176,19 +178,53 @@ async function downloadTicket() {
   ctx.fillText(roleText, 160, 332)
   ctx.textAlign = 'left' // Reset
 
+  // 9b. Supporting Team Badge
+  const teamText = `SUPPORTING: ${ticketInfo.supporting.toUpperCase()}`
+  ctx.fillStyle = '#0a2d1d' // Default green
+  let teamTextColor = '#FFFFFF'
+  
+  if (ticketInfo.supporting.toLowerCase() === 'neutral') {
+    ctx.fillStyle = '#1a1a26'
+    teamTextColor = '#9898b0'
+  } else if (ticketInfo.supporting.toLowerCase() === 'aliy') {
+    ctx.fillStyle = '#2b220c'
+    teamTextColor = '#e8b84b'
+  } else if (ticketInfo.supporting.toLowerCase() === 'abubakar') {
+    ctx.fillStyle = '#0c2236'
+    teamTextColor = '#4ba8e8'
+  } else if (ticketInfo.supporting.toLowerCase() === 'umar') {
+    ctx.fillStyle = '#22222a'
+    teamTextColor = '#9898b0'
+  } else if (ticketInfo.supporting.toLowerCase() === 'uthman') {
+    ctx.fillStyle = '#0a3220'
+    teamTextColor = '#3dd68c'
+  }
+  
+  ctx.fillRect(260, 300, 260, 48)
+  ctx.strokeStyle = '#27523d'
+  ctx.lineWidth = 2
+  ctx.strokeRect(260, 300, 260, 48)
+  
+  ctx.fillStyle = teamTextColor
+  ctx.font = 'bold 18px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(teamText, 390, 330)
+  ctx.textAlign = 'left' // Reset
+
+  // 9c. Twitter Handle (shifted right to X = 540)
   if (ticketInfo.twitter) {
     // Draw small X (Twitter) logo
     const xLogo = new Path2D('M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z')
     
     ctx.save()
-    ctx.translate(260, 310) // Position the logo vertically centered with baseline
+    ctx.translate(540, 310) // Position the logo vertically centered with baseline
     ctx.fillStyle = '#4ba8e8'
     ctx.fill(xLogo)
     ctx.restore()
 
     ctx.fillStyle = '#4ba8e8'
     ctx.font = 'bold 22px sans-serif'
-    ctx.fillText(ticketInfo.twitter, 292, 332)
+    ctx.fillText(ticketInfo.twitter, 572, 332)
   }
 
   // 10. Info details
@@ -365,11 +401,14 @@ async function downloadCertificate() {
   ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
   ctx.font = '26px sans-serif'
   const isPlayer = ticketInfo.role.toLowerCase() === 'player'
+  const supportText = ticketInfo.supporting.toLowerCase() === 'neutral'
+    ? 'as a neutral observer'
+    : `supporting ${ticketInfo.supporting} FC`
   const descLine1 = isPlayer
     ? 'for active participation as a player, demonstrating outstanding teamwork, discipline, and'
-    : 'for participating as a supporter and spectator, exhibiting the spirit of football community,'
+    : `for participating as a spectator and loyal community supporter (${supportText}), exhibiting`
   ctx.fillText(descLine1, 1000, 715)
-  ctx.fillText('brotherhood, and sportsmanship at the annual Ummah Twitter Match.', 1000, 765)
+  ctx.fillText('brotherhood, unity, and sportsmanship at the annual Ummah Twitter Match.', 1000, 765)
 
   // 10. Venue/Date details
   ctx.fillStyle = '#e8b84b'
@@ -575,7 +614,7 @@ async function downloadCertificate() {
               </div>
             </div>
 
-            <div class="field last">
+            <div class="field">
               <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
               <input
                 v-model="form.email"
@@ -583,6 +622,24 @@ async function downloadCertificate() {
                 placeholder="you@example.com"
                 required autocomplete="email" inputmode="email"
               />
+            </div>
+
+            <div class="field last">
+              <label for="supporting">Supporting Team <span class="req" aria-hidden="true">*</span></label>
+              <div class="select-wrap">
+                <select v-model="form.supporting" id="supporting" name="supporting" required>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Aliy">Aliy</option>
+                  <option value="Abubakar">Abubakar</option>
+                  <option value="Umar">Umar</option>
+                  <option value="Uthman">Uthman</option>
+                </select>
+                <span class="chevron" aria-hidden="true">
+                  <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
             </div>
 
             <button type="submit" class="btn-submit" :class="{ loading: state === 'loading' }" :disabled="state === 'loading'">
@@ -628,9 +685,12 @@ async function downloadCertificate() {
                     <span class="ticket-logo-text">UMMAH TWITTER FC PASS</span>
                   </div>
                   <h3 class="ticket-user-name">{{ ticketInfo.name }}</h3>
-                  <div style="display: flex; gap: 0.75rem; align-items: center;">
+                  <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                     <span class="ticket-role-badge" :class="ticketInfo.role.toLowerCase()">
                       {{ ticketInfo.role }}
+                    </span>
+                    <span class="ticket-team-badge" :class="ticketInfo.supporting.toLowerCase()">
+                      Supporting: {{ ticketInfo.supporting }}
                     </span>
                     <span v-if="ticketInfo.twitter" class="ticket-twitter">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.85; flex-shrink: 0;">
@@ -1335,4 +1395,42 @@ select option {
   align-items: center;
   gap: 4px;
 }
+.ticket-team-badge {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+.ticket-team-badge.neutral {
+  background-color: rgba(152, 152, 176, 0.1);
+  border-color: rgba(152, 152, 176, 0.3);
+  color: var(--silver);
+}
+.ticket-team-badge.aliy {
+  background-color: rgba(232, 184, 75, 0.1);
+  border-color: rgba(232, 184, 75, 0.3);
+  color: var(--gold);
+}
+.ticket-team-badge.abubakar {
+  background-color: rgba(75, 168, 232, 0.1);
+  border-color: rgba(75, 168, 232, 0.3);
+  color: var(--blue);
+}
+.ticket-team-badge.umar {
+  background-color: rgba(152, 152, 176, 0.15);
+  border-color: rgba(152, 152, 176, 0.4);
+  color: var(--silver);
+}
+.ticket-team-badge.uthman {
+  background-color: rgba(61, 214, 140, 0.1);
+  border-color: rgba(61, 214, 140, 0.3);
+  color: var(--green);
+}
 </style>
+

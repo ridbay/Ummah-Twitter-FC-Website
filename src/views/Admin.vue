@@ -78,7 +78,8 @@ const filtered = computed(() => {
       !q ||
       r.name.toLowerCase().includes(q) ||
       (r.twitter ?? '').toLowerCase().includes(q) ||
-      r.email.toLowerCase().includes(q)
+      r.email.toLowerCase().includes(q) ||
+      (r.supporting ?? '').toLowerCase().includes(q)
     const matchRole   = roleFilter.value   === 'all' || r.role.toLowerCase() === roleFilter.value
     const matchStatus = statusFilter.value === 'all' ||
       (statusFilter.value === 'arrived' ? r.arrived : !r.arrived)
@@ -294,9 +295,12 @@ onUnmounted(() => {
                 :class="{ 'is-arrived': reg.arrived }"
               >
                 <div class="reg-header">
-                  <div class="reg-name-row">
+                  <div class="reg-name-row" style="flex-wrap: wrap;">
                     <span class="reg-name">{{ reg.name }}</span>
                     <span class="role-badge" :class="reg.role.toLowerCase()">{{ reg.role }}</span>
+                    <span class="support-badge" :class="(reg.supporting || 'neutral').toLowerCase()">
+                      Supports: {{ reg.supporting || 'Neutral' }}
+                    </span>
                   </div>
                   <div class="reg-time">{{ timeAgo(reg.created_at) }}</div>
                 </div>
@@ -771,6 +775,47 @@ select option { background: #1a1a26; color: var(--text); }
   color: var(--gold);
   background: rgba(232,184,75,0.1);
   border-color: rgba(232,184,75,0.3);
+}
+
+.support-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.support-badge.neutral {
+  color: var(--silver);
+  background: rgba(152,152,176,0.1);
+  border-color: rgba(152,152,176,0.3);
+}
+
+.support-badge.aliy {
+  color: var(--gold);
+  background: rgba(232,184,75,0.1);
+  border-color: rgba(232,184,75,0.3);
+}
+
+.support-badge.abubakar {
+  color: var(--blue);
+  background: rgba(75,168,232,0.1);
+  border-color: rgba(75,168,232,0.3);
+}
+
+.support-badge.umar {
+  color: var(--silver);
+  background: rgba(152,152,176,0.15);
+  border-color: rgba(152,152,176,0.4);
+}
+
+.support-badge.uthman {
+  color: var(--green);
+  background: rgba(61,214,140,0.1);
+  border-color: rgba(61,214,140,0.3);
 }
 
 .reg-time {
