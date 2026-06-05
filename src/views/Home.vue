@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 
-const activeTab = ref('objectives')
 const selectedTeam = ref(null)
 
 const teams = [
@@ -42,67 +41,6 @@ const teams = [
     history: "Honoring the fourth Caliph, Aliy, famous for his wisdom, bravery, and chivalry on and off the field."
   }
 ]
-
-const excos = [
-  { name: "Habeeb Adebayo Abd-Azeez", role: "Chairman", duties: "Provides overall leadership, presides over meetings, and represents the organization externally." },
-  { name: "Adam Abidemi Opeloyeru", role: "Secretary", duties: "Manages official correspondence, records minutes, and maintains organizational custody." },
-  { name: "Bunkunmi Dhikrullahi Shittu", role: "Accounting Officer", duties: "Oversees financial records, compliance, and accounts transparency." },
-  { name: "Oriyomi Hakeem Sulaimon", role: "Public Relations Officer (PRO)", duties: "Directs media channels, announcements, and sponsor relations." },
-  { name: "Olorunjuwon Gbolahan Alimi", role: "Welfare Officer", duties: "Coordinates member wellbeing, event support, and emergency initiatives." },
-  { name: "Olayiwola AbdulGafar Ademola", role: "Event Coordinator", duties: "Executes football leagues, schedules matches, and manages stadium logistics." }
-]
-
-const constitutionArticles = {
-  objectives: {
-    title: "Article 2: Objectives",
-    content: [
-      "To foster unity among Muslims through annual football competitions and related sporting activities.",
-      "To promote healthy recreation, teamwork, and community development.",
-      "To provide a transparent and accountable system for managing donations and sponsorships.",
-      "To represent Muslim youths in football and other social engagements."
-    ]
-  },
-  membership: {
-    title: "Article 3: Membership",
-    content: [
-      "Membership is open to all Muslims who register with UMMAH TWITTER FC.",
-      "Members must abide by the constitution and rules of the association.",
-      "Membership may be revoked for misconduct or actions contrary to the objectives of UMMAH TWITTER FC."
-    ]
-  },
-  selection: {
-    title: "Article 5: Team Selection",
-    content: [
-      "UMMAH TWITTER FC shall consist of four teams: Umar, Abubakar, Uthman, and Aliy.",
-      "Members shall be assigned to teams through a transparent selection process.",
-      "Payment of registration fees or contributions guarantees inclusion in one of the teams."
-    ]
-  },
-  finance: {
-    title: "Article 7: Finance & Banking",
-    content: [
-      "UMMAH TWITTER FC shall maintain a corporate bank account with The Alternative Bank.",
-      "All donations, sponsorships, and funds shall be paid into the corporate account.",
-      "Withdrawals shall require signatures of the Secretary and Accounting Officer.",
-      "Annual financial reports shall be presented to members."
-    ]
-  },
-  governance: {
-    title: "Article 8 & 9: Amendments & Dissolution",
-    content: [
-      "The constitution may be amended by a two-thirds majority of registered members present at a general meeting.",
-      "UMMAH TWITTER FC may be dissolved by a two-thirds majority vote of members.",
-      "In the event of dissolution, assets shall be donated to a recognized Muslim charity."
-    ]
-  }
-}
-
-function scrollToSection(id) {
-  const element = document.getElementById(id)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
-  }
-}
 
 function selectTeam(teamId) {
   selectedTeam.value = selectedTeam.value === teamId ? null : teamId
@@ -153,9 +91,9 @@ function selectTeam(teamId) {
             <router-link to="/schedule" class="outline-gold-button" style="padding: 0.875rem 2rem; font-size: 1rem;">
               View Game Schedule
             </router-link>
-            <button @click="scrollToSection('teams')" class="outline-gold-button" style="padding: 0.875rem 2rem; font-size: 1rem; border-color: rgba(248, 250, 252, 0.3); color: #F8FAFC;">
-              Meet the Teams
-            </button>
+            <router-link to="/about" class="outline-gold-button" style="padding: 0.875rem 2rem; font-size: 1rem; border-color: rgba(248, 250, 252, 0.3); color: #F8FAFC;">
+              About Us
+            </router-link>
           </div>
         </div>
       </div>
@@ -215,85 +153,6 @@ function selectTeam(teamId) {
       </div>
     </section>
 
-    <!-- About & Origin Story Section -->
-    <section id="about" class="section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">THE STORY OF UMMAH TWITTER FC</h2>
-          <div class="section-divider"></div>
-          <p class="section-subtitle">
-            Fostering unity, friendship, and spiritual connection among Muslim youth through sport.
-          </p>
-        </div>
-
-        <div class="about-grid">
-          <div style="display: flex; flex-direction: column; gap: 2rem;">
-            <div class="about-card">
-              <h3 class="about-card-title">
-                <!-- Star Icon -->
-                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.25rem; height: 1.25rem; color: #D4AF37; fill-opacity: 0.2;">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-                Our Origins
-              </h3>
-              <p class="about-card-text">
-                Ummah Twitter FC is a community-driven football organization that has spent the past six years fostering unity and brotherhood among Muslims. What began as a social initiative on Twitter has grown into an annual football league that brings people together beyond cultural and social differences, using sport as a powerful tool for connection.
-              </p>
-            </div>
-
-            <div class="mission-vision-grid">
-              <div class="about-card">
-                <h4 class="about-card-title" style="color: #FFFFFF;">Our Mission</h4>
-                <p class="about-card-text" style="font-size: 0.875rem;">
-                  To unite Muslims through football by creating a platform that promotes brotherhood, teamwork, and mutual respect beyond all differences.
-                </p>
-              </div>
-              <div class="about-card">
-                <h4 class="about-card-title" style="color: #FFFFFF;">Our Vision</h4>
-                <p class="about-card-text" style="font-size: 0.875rem;">
-                  To build a global community where Muslims are connected through shared values, using sport as a pathway toward unity and the ultimate goal: attaining Jannah.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="pillar-card">
-            <div class="pillar-bg-glow"></div>
-            <h3 class="pillar-title">Constitutional Pillars</h3>
-            
-            <div class="pillar-list">
-              <div class="pillar-item">
-                <div class="pillar-num">01.</div>
-                <div>
-                  <h5 class="pillar-name">United Stand (Saff alignment)</h5>
-                  <p class="pillar-desc">Inspired by the alignment in solat (prayer), symbolizing Muslim brothers standing firmly united, side-by-side.</p>
-                </div>
-              </div>
-
-              <div class="pillar-item">
-                <div class="pillar-num">02.</div>
-                <div>
-                  <h5 class="pillar-name">Championship Integrity</h5>
-                  <p class="pillar-desc">A transparent administration managing the team selection, finances, rules, and scoring to ensure absolute fairness.</p>
-                </div>
-              </div>
-
-              <div class="pillar-item">
-                <div class="pillar-num">03.</div>
-                <div>
-                  <h5 class="pillar-name">Community Welfare</h5>
-                  <p class="pillar-desc">More than a tournament—supporting brothers through welfare initiatives, emergency responses, and regular fellowship.</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="pillar-footer">
-              "Brotherhood Beyond the Pitch."
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- The 4 Teams Contenders Section -->
     <section id="teams" class="section teams-section">
@@ -435,81 +294,6 @@ function selectTeam(teamId) {
                 <path d="m9 12 2 2 4-4"/>
               </svg>
               <span>Notice: All points are tracked by the Executive Accounting Officer and verified on-pitch immediately after referee whistles.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Leadership & Executive Exco Council Section -->
-    <section id="leadership" class="section exco-section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">THE EXECUTIVE COUNCIL</h2>
-          <div class="section-divider"></div>
-          <p class="section-subtitle">
-            Meet the officers governing Ummah Twitter FC as established in Appendix 1 of the constitution.
-          </p>
-        </div>
-
-        <div class="exco-grid">
-          <div v-for="(exco, idx) in excos" :key="idx" class="exco-card">
-            <div class="exco-card-border"></div>
-            <div class="exco-role">{{ exco.role }}</div>
-            <h4 class="exco-name">{{ exco.name }}</h4>
-            <p class="exco-duties">{{ exco.duties }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Interactive Constitution Viewer -->
-    <section id="constitution" class="section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">THE LEAGUE CONSTITUTION</h2>
-          <div class="section-divider"></div>
-          <p class="section-subtitle">
-            Explore the core governing rules of the Ummah Twitter FC organization.
-          </p>
-        </div>
-
-        <div class="const-grid">
-          <!-- Tabs Sidebar -->
-          <div class="const-sidebar">
-            <button
-              v-for="(val, key) in constitutionArticles"
-              :key="key"
-              @click="activeTab = key"
-              class="const-tab-btn"
-              :class="{ active: activeTab === key }"
-            >
-              {{ val.title.split(":")[0] }}
-              <!-- BookOpen Icon -->
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
-            </button>
-          </div>
-
-          <!-- Tabs Content -->
-          <div class="const-content">
-            <div>
-              <h3 class="const-content-title">
-                {{ constitutionArticles[activeTab].title }}
-              </h3>
-              
-              <ul class="const-points">
-                <li v-for="(point, index) in constitutionArticles[activeTab].content" :key="index" class="const-point">
-                  <span class="const-bullet">•</span>
-                  <span>{{ point }}</span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="const-footer">
-              Verified: Ummah Twitter FC Constitutional Charter
             </div>
           </div>
         </div>

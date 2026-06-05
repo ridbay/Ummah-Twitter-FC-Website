@@ -20,7 +20,7 @@
         <div>
           <h4 class="footer-title">Quick Links</h4>
           <ul class="footer-links">
-            <li><router-link to="/#about" class="footer-nav-link">About</router-link></li>
+            <li><router-link to="/about" class="footer-nav-link">About</router-link></li>
             <li><router-link to="/#teams" class="footer-nav-link">The Teams</router-link></li>
             <li><router-link to="/schedule" class="footer-nav-link">Game Schedule</router-link></li>
             <li><router-link to="/#rules" class="footer-nav-link">Format &amp; Scoring</router-link></li>
@@ -48,9 +48,7 @@
               </svg>
               <a href="mailto:ummahfc@gmail.com">ummahfc@gmail.com</a>
             </li>
-            <li class="footer-support">
-              Support: <a href="mailto:quincysdesign@gmail.com">quincysdesign@gmail.com</a>
-            </li>
+          
           </ul>
         </div>
 
@@ -70,7 +68,12 @@
             </li>
             <li class="footer-hashtags">
               Tag us on Twitter/X with:
-              <span class="footer-hashtag-bold">#UmmahTwitterMatch2026</span>
+              <a
+                href="https://x.com/hashtag/UmmahTwitterMatch2026"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-hashtag-bold"
+              >#UmmahTwitterMatch2026</a>
             </li>
           </ul>
         </div>
@@ -92,10 +95,13 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="credit-ext-icon"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </a>
           <span class="credit-amp">&amp;</span>
-          <span class="credit-person">
+          <a
+            href="mailto:quincysdesign@gmail.com"
+            class="credit-person"
+          >
             <span class="credit-avatar alt">G</span>
             <span class="credit-name">geekmaros</span>
-          </span>
+          </a>
         </div>
       </div>
 
@@ -217,6 +223,11 @@
   margin-top: 0.25rem;
   font-weight: 700;
   color: #FFFFFF;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-hashtag-bold:hover {
+  color: #D4AF37;
 }
 .footer-bottom {
   border-top: 1px solid rgba(39, 82, 61, 0.6);

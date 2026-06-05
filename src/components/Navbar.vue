@@ -27,6 +27,7 @@ function closeMobileMenu() {
       <!-- Desktop Navigation Links -->
       <div class="nav-links">
         <router-link to="/" class="nav-link-a">Home</router-link>
+        <router-link to="/about" class="nav-link-a">About</router-link>
         <router-link to="/schedule" class="nav-link-a">Schedule</router-link>
         <router-link to="/register" class="nav-link-a">Check In</router-link>
         <router-link to="/qr" class="nav-link-a">QR Code</router-link>
@@ -60,6 +61,7 @@ function closeMobileMenu() {
     <transition name="slide-down">
       <div v-if="isMobileMenuOpen" class="mobile-menu">
         <router-link to="/" class="mobile-menu-item" @click="closeMobileMenu">Home</router-link>
+        <router-link to="/about" class="mobile-menu-item" @click="closeMobileMenu">About</router-link>
         <router-link to="/schedule" class="mobile-menu-item" @click="closeMobileMenu">Game Schedule</router-link>
         <router-link to="/register" class="mobile-menu-item" @click="closeMobileMenu">Spectator Check In</router-link>
         <router-link to="/qr" class="mobile-menu-item" @click="closeMobileMenu">Event QR Code</router-link>
