@@ -65,15 +65,15 @@ const constitutionArticles = {
   membership: {
     title: "Article 3: Membership",
     content: [
-      "Membership is open to all Muslims who register with UMMAH FC.",
+      "Membership is open to all Muslims who register with UMMAH TWITTER FC.",
       "Members must abide by the constitution and rules of the association.",
-      "Membership may be revoked for misconduct or actions contrary to the objectives of UMMAH FC."
+      "Membership may be revoked for misconduct or actions contrary to the objectives of UMMAH TWITTER FC."
     ]
   },
   selection: {
     title: "Article 5: Team Selection",
     content: [
-      "UMMAH FC shall consist of four teams: Umar, Abubakar, Uthman, and Aliy.",
+      "UMMAH TWITTER FC shall consist of four teams: Umar, Abubakar, Uthman, and Aliy.",
       "Members shall be assigned to teams through a transparent selection process.",
       "Payment of registration fees or contributions guarantees inclusion in one of the teams."
     ]
@@ -81,7 +81,7 @@ const constitutionArticles = {
   finance: {
     title: "Article 7: Finance & Banking",
     content: [
-      "UMMAH FC shall maintain a corporate bank account with The Alternative Bank.",
+      "UMMAH TWITTER FC shall maintain a corporate bank account with The Alternative Bank.",
       "All donations, sponsorships, and funds shall be paid into the corporate account.",
       "Withdrawals shall require signatures of the Secretary and Accounting Officer.",
       "Annual financial reports shall be presented to members."
@@ -91,7 +91,7 @@ const constitutionArticles = {
     title: "Article 8 & 9: Amendments & Dissolution",
     content: [
       "The constitution may be amended by a two-thirds majority of registered members present at a general meeting.",
-      "UMMAH FC may be dissolved by a two-thirds majority vote of members.",
+      "UMMAH TWITTER FC may be dissolved by a two-thirds majority vote of members.",
       "In the event of dissolution, assets shall be donated to a recognized Muslim charity."
     ]
   }
@@ -134,7 +134,7 @@ function selectTeam(teamId) {
           </div>
           
           <h1 class="hero-title">
-            <span class="brand-title" style="font-size: inherit; line-height: inherit; display: inline;">UMMAH FC</span>
+            <span class="brand-title" style="font-size: inherit; line-height: inherit; display: inline;">UMMAH TWITTER FC</span>
             <span class="hero-title-sub">BROTHERHOOD BEYOND THE PITCH</span>
           </h1>
           
@@ -219,7 +219,7 @@ function selectTeam(teamId) {
     <section id="about" class="section">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">THE STORY OF UMMAH FC</h2>
+          <h2 class="section-title">THE STORY OF UMMAH TWITTER FC</h2>
           <div class="section-divider"></div>
           <p class="section-subtitle">
             Fostering unity, friendship, and spiritual connection among Muslim youth through sport.
@@ -237,7 +237,7 @@ function selectTeam(teamId) {
                 Our Origins
               </h3>
               <p class="about-card-text">
-                Ummah FC is a community-driven football organization that has spent the past six years fostering unity and brotherhood among Muslims. What began as a social initiative on Twitter has grown into an annual football league that brings people together beyond cultural and social differences, using sport as a powerful tool for connection.
+                Ummah Twitter FC is a community-driven football organization that has spent the past six years fostering unity and brotherhood among Muslims. What began as a social initiative on Twitter has grown into an annual football league that brings people together beyond cultural and social differences, using sport as a powerful tool for connection.
               </p>
             </div>
 
@@ -351,8 +351,9 @@ function selectTeam(teamId) {
           </div>
         </div>
 
-        <div style="margin-top: 3rem; padding: 1.5rem; border-radius: 8px; background-color: #0a2d1d; border: 1px solid #27523d; text-align: center; max-width: 42rem; margin-left: auto; margin-right: auto;">
-          <p style="font-size: 0.875rem; color: rgba(248, 250, 252, 0.8);">
+        <div style="margin-top: 3rem; padding: 1.5rem; border-radius: 8px; background-color: #0a2d1d; border: 1px solid #27523d; text-align: center; max-width: 42rem; margin-left: auto; margin-right: auto; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+          <img src="/logo.jpg" alt="Official Ummah FC Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #D4AF37;" />
+          <p style="font-size: 0.875rem; color: rgba(248, 250, 252, 0.8); margin: 0;">
             <strong style="color: #D4AF37">Branding Note:</strong> As defined in Appendix 3 of the constitution, a <strong style="color: #FFFFFF">unified Ummah logo</strong> representing our collective brotherhood is utilized by all teams.
           </p>
         </div>
@@ -404,7 +405,7 @@ function selectTeam(teamId) {
           <div class="rules-card">
             <h3 class="rules-card-title">Constitutional Points System</h3>
             <p class="points-intro">
-              Unlike traditional leagues, the Ummah FC constitution utilizes an inclusive, participation-encouraging scoring system. Every outcome secures points toward the team total.
+              Unlike traditional leagues, the Ummah Twitter FC constitution utilizes an inclusive, participation-encouraging scoring system. Every outcome secures points toward the team total.
             </p>
 
             <div class="points-grid">
@@ -447,7 +448,7 @@ function selectTeam(teamId) {
           <h2 class="section-title">THE EXECUTIVE COUNCIL</h2>
           <div class="section-divider"></div>
           <p class="section-subtitle">
-            Meet the officers governing Ummah FC as established in Appendix 1 of the constitution.
+            Meet the officers governing Ummah Twitter FC as established in Appendix 1 of the constitution.
           </p>
         </div>
 
@@ -469,7 +470,7 @@ function selectTeam(teamId) {
           <h2 class="section-title">THE LEAGUE CONSTITUTION</h2>
           <div class="section-divider"></div>
           <p class="section-subtitle">
-            Explore the core governing rules of the Ummah FC organization.
+            Explore the core governing rules of the Ummah Twitter FC organization.
           </p>
         </div>
 
@@ -508,7 +509,7 @@ function selectTeam(teamId) {
             </div>
 
             <div class="const-footer">
-              Verified: Ummah FC Constitutional Charter
+              Verified: Ummah Twitter FC Constitutional Charter
             </div>
           </div>
         </div>
@@ -642,7 +643,7 @@ function selectTeam(teamId) {
             </div>
             <div>
               <span class="payment-label">Account Name</span>
-              <span class="payment-value">UMMAH FC</span>
+              <span class="payment-value">UMMAH TWITTER FC</span>
             </div>
             <div>
               <span class="payment-label">Account Number</span>
@@ -663,8 +664,8 @@ function selectTeam(teamId) {
         <div class="footer-grid">
           <div class="footer-about">
             <div class="footer-logo">
-              <span style="font-size: 1.875rem">⚽</span>
-              <span class="brand-title" style="font-size: 1.5rem; display: inline;">UMMAH FC</span>
+              <img src="/logo.jpg" alt="Ummah FC Logo" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid #D4AF37; margin-right: 0.5rem; display: inline-block; vertical-align: middle;" />
+              <span class="brand-title" style="font-size: 1.5rem; display: inline; vertical-align: middle;">UMMAH FC</span>
             </div>
             <p class="footer-desc">
               Fostering unity, teamwork, and brotherhood among the Muslim youth in Nigeria. Utilizing sports to build relationships that extend past the field and into Jannah.
@@ -733,7 +734,7 @@ function selectTeam(teamId) {
 
         <div class="footer-bottom">
           <div>
-            © 2026 Ummah FC. All Rights Reserved. Lagos, Nigeria.
+            © 2026 Ummah Twitter FC. All Rights Reserved. Lagos, Nigeria.
           </div>
           <div>
             Alternative Bank Account: 0514013964

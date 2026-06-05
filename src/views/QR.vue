@@ -34,12 +34,7 @@ function print() {
       </div>
 
       <div class="logo-row" aria-hidden="true">
-        <svg width="40" height="40" viewBox="0 0 52 52" fill="none">
-          <circle cx="26" cy="26" r="25" stroke="#e8b84b" stroke-width="1.5" fill="none" opacity="0.45"/>
-          <circle cx="26" cy="26" r="19" stroke="#e8b84b" stroke-width="1" fill="none" opacity="0.25"/>
-          <path d="M26 14a12 12 0 1 0 0 24 10 10 0 1 1 0-24z" fill="#e8b84b" opacity="0.88"/>
-          <polygon points="30,20 31,23.5 34.5,23.5 31.8,25.5 32.8,29 30,27 27.2,29 28.2,25.5 25.5,23.5 29,23.5" fill="#e8b84b"/>
-        </svg>
+        <img src="/logo.jpg" alt="Ummah Twitter FC Logo" style="width: 66px; height: 66px; border-radius: 50%; object-fit: cover; border: 1.5px solid #D4AF37;" />
       </div>
 
       <h1>UmmahTwitter Match 2026</h1>

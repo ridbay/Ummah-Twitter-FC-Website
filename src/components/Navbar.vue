@@ -17,9 +17,9 @@ function closeMobileMenu() {
     <div class="container navbar-container">
       <!-- Brand Logo -->
       <router-link to="/" class="brand" @click="closeMobileMenu">
-        <span style="font-size: 1.5rem">⚽</span>
+        <img src="/logo.jpg" alt="Ummah Twitter FC Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #D4AF37; flex-shrink: 0;" />
         <div>
-          <span class="brand-title">UMMAH FC</span>
+          <span class="brand-title">UMMAH TWITTER FC</span>
           <span class="brand-subtitle">Brotherhood Beyond the Pitch</span>
         </div>
       </router-link>

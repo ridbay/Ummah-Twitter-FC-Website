@@ -1,13 +1,14 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { supabase } from '../lib/supabase.js'
+import { jsPDF } from 'jspdf'
 
 const form = reactive({ name: '', twitter: '', email: '', role: '' })
 const state = ref('idle') // idle | loading | success | error
 const errorMsg = ref('')
 const successName = ref('')
 
-const ticketInfo = reactive({ name: '', role: '', ticketId: '' })
+const ticketInfo = reactive({ name: '', role: '', ticketId: '', twitter: '' })
 
 async function handleSubmit() {
   if (!form.name.trim())  return setError('Please enter your full name.')
@@ -39,6 +40,7 @@ async function handleSubmit() {
   
   ticketInfo.name = form.name.trim()
   ticketInfo.role = form.role
+  ticketInfo.twitter = twitter ? `@${twitter}` : ''
   ticketInfo.ticketId = `UM-${uniqueSuffix}`
 
   successName.value = form.name.trim().split(' ')[0]
@@ -50,7 +52,17 @@ function setError(msg) {
   state.value = 'error'
 }
 
-function downloadTicket() {
+function loadLogo() {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.src = '/logo.jpg'
+    img.onload = () => resolve(img)
+    img.onerror = () => resolve(null)
+  })
+}
+
+async function downloadTicket() {
+  const logoImg = await loadLogo()
   const canvas = document.createElement('canvas')
   canvas.width = 1200
   canvas.height = 675
@@ -118,9 +130,24 @@ function downloadTicket() {
   ctx.setLineDash([])
 
   // 7. Headers
+  if (logoImg) {
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(110, 90, 30, 0, Math.PI * 2)
+    ctx.clip()
+    ctx.drawImage(logoImg, 80, 60, 60, 60)
+    ctx.restore()
+
+    ctx.strokeStyle = '#e8b84b'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.arc(110, 90, 30, 0, Math.PI * 2)
+    ctx.stroke()
+  }
+
   ctx.fillStyle = '#FFFFFF'
   ctx.font = 'bold 36px sans-serif'
-  ctx.fillText('⚽ UMMAH FC', 80, 100)
+  ctx.fillText('UMMAH TWITTER FC', logoImg ? 160 : 80, 102)
 
   ctx.fillStyle = '#e8b84b'
   ctx.font = 'bold 20px sans-serif'
@@ -149,6 +176,21 @@ function downloadTicket() {
   ctx.textAlign = 'center'
   ctx.fillText(roleText, 160, 332)
   ctx.textAlign = 'left' // Reset
+
+  if (ticketInfo.twitter) {
+    // Draw small X (Twitter) logo
+    const xLogo = new Path2D('M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z')
+    
+    ctx.save()
+    ctx.translate(260, 310) // Position the logo vertically centered with baseline
+    ctx.fillStyle = '#4ba8e8'
+    ctx.fill(xLogo)
+    ctx.restore()
+
+    ctx.fillStyle = '#4ba8e8'
+    ctx.font = 'bold 22px sans-serif'
+    ctx.fillText(ticketInfo.twitter, 292, 332)
+  }
 
   // 10. Info details
   ctx.fillStyle = 'rgba(248, 250, 252, 0.75)'
@@ -202,7 +244,250 @@ function downloadTicket() {
   link.href = image
   link.click()
 }
+
+async function downloadCertificate() {
+  const logoImg = await loadLogo()
+  const canvas = document.createElement('canvas')
+  canvas.width = 2000
+  canvas.height = 1414
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  // 1. Deep Rich Forest Green Radial Gradient Background
+  const grad = ctx.createRadialGradient(1000, 707, 100, 1000, 707, 1200)
+  grad.addColorStop(0, '#0a321c')
+  grad.addColorStop(1, '#03170e')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // 2. Soccer Field Watermark lines
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)'
+  ctx.lineWidth = 4
+  ctx.strokeRect(100, 100, 1800, 1214)
+  
+  ctx.beginPath()
+  ctx.moveTo(1000, 100)
+  ctx.lineTo(1000, 1314)
+  ctx.stroke()
+  
+  ctx.beginPath()
+  ctx.arc(1000, 707, 240, 0, Math.PI * 2)
+  ctx.stroke()
+
+  // 3. Double Gold Borders
+  ctx.strokeStyle = '#e8b84b'
+  ctx.lineWidth = 8
+  ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120)
+
+  ctx.strokeStyle = 'rgba(232, 184, 75, 0.4)'
+  ctx.lineWidth = 2
+  ctx.strokeRect(85, 85, canvas.width - 170, canvas.height - 170)
+
+  // 4. Ornamental Corner Brackets
+  ctx.fillStyle = '#e8b84b'
+  // Top-left
+  ctx.fillRect(80, 80, 80, 8)
+  ctx.fillRect(80, 80, 8, 80)
+  // Top-right
+  ctx.fillRect(1840, 80, 80, 8)
+  ctx.fillRect(1912, 80, 8, 80)
+  // Bottom-left
+  ctx.fillRect(80, 1326, 80, 8)
+  ctx.fillRect(80, 1254, 8, 80)
+  // Bottom-right
+  ctx.fillRect(1840, 1326, 80, 8)
+  ctx.fillRect(1912, 1254, 8, 80)
+
+  // 5. Header: Logo & Club Title
+  if (logoImg) {
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(1000, 150, 60, 0, Math.PI * 2)
+    ctx.clip()
+    ctx.drawImage(logoImg, 940, 90, 120, 120)
+    ctx.restore()
+    
+    // Gold ring around logo
+    ctx.strokeStyle = '#e8b84b'
+    ctx.lineWidth = 3
+    ctx.beginPath()
+    ctx.arc(1000, 150, 60, 0, Math.PI * 2)
+    ctx.stroke()
+  }
+
+  ctx.fillStyle = '#e8b84b'
+  ctx.font = 'bold 28px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('U M M A H   T W I T T E R   F O O T B A L L   C L U B', 1000, 265)
+
+  // 6. Certificate Title in Gold Gradient
+  const goldGrad = ctx.createLinearGradient(600, 0, 1400, 0)
+  goldGrad.addColorStop(0, '#FFE082')
+  goldGrad.addColorStop(0.5, '#E8C14A')
+  goldGrad.addColorStop(1, '#B89020')
+  ctx.fillStyle = goldGrad
+  ctx.font = 'bold 84px Georgia, serif'
+  ctx.fillText('CERTIFICATE OF ATTENDANCE', 1000, 370)
+
+  // 7. Presentation statement
+  ctx.fillStyle = '#FFFFFF'
+  ctx.font = 'italic 28px Georgia, serif'
+  ctx.fillText('This certificate is proudly presented to', 1000, 480)
+
+  // 8. Name with dynamic scaling
+  ctx.fillStyle = '#FFFFFF'
+  let nameSize = 80
+  ctx.font = `bold ${nameSize}px sans-serif`
+  while (ctx.measureText(ticketInfo.name).width > 1400 && nameSize > 36) {
+    nameSize -= 4
+    ctx.font = `bold ${nameSize}px sans-serif`
+  }
+  ctx.fillText(ticketInfo.name, 1000, 590)
+
+  // Underline decorative line
+  ctx.strokeStyle = '#e8b84b'
+  ctx.lineWidth = 3
+  ctx.beginPath()
+  ctx.moveTo(600, 630)
+  ctx.lineTo(1400, 630)
+  ctx.stroke()
+
+  // Central diamond on underline
+  ctx.fillStyle = '#e8b84b'
+  ctx.beginPath()
+  ctx.moveTo(1000, 620)
+  ctx.lineTo(1012, 630)
+  ctx.lineTo(1000, 640)
+  ctx.lineTo(988, 630)
+  ctx.closePath()
+  ctx.fill()
+
+  // 9. Event Description based on role
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
+  ctx.font = '26px sans-serif'
+  const isPlayer = ticketInfo.role.toLowerCase() === 'player'
+  const descLine1 = isPlayer
+    ? 'for active participation as a player, demonstrating outstanding teamwork, discipline, and'
+    : 'for participating as a supporter and spectator, exhibiting the spirit of football community,'
+  ctx.fillText(descLine1, 1000, 715)
+  ctx.fillText('brotherhood, and sportsmanship at the annual Ummah Twitter Match.', 1000, 765)
+
+  // 10. Venue/Date details
+  ctx.fillStyle = '#e8b84b'
+  ctx.font = 'bold 24px sans-serif'
+  ctx.fillText('Saturday, June 6, 2026  ·  Landmark College, Ikorodu', 1000, 850)
+
+  // 11. Signature Block (Left side)
+  const sigX = 550
+  const sigY = 1070
+  ctx.strokeStyle = 'rgba(232, 184, 75, 0.6)'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(sigX - 180, sigY)
+  ctx.lineTo(sigX + 180, sigY)
+  ctx.stroke()
+
+  ctx.fillStyle = '#4ba8e8' // Brand cyan
+  ctx.font = 'italic 44px cursive, "Brush Script MT", Georgia, serif'
+  ctx.fillText('Ummah Twitter FC Committee', sigX, sigY - 20)
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
+  ctx.font = '18px sans-serif'
+  ctx.fillText('Organizing Committee', sigX, sigY + 30)
+  ctx.fillText('Ummah Twitter FC 2026', sigX, sigY + 55)
+
+  // 12. Official Stamp / Gold Seal (Right side)
+  const sealX = 1450
+  const sealY = 1070
+
+  // Draw Ribbons
+  ctx.fillStyle = '#b89020'
+  ctx.beginPath()
+  ctx.moveTo(sealX - 25, sealY)
+  ctx.lineTo(sealX - 45, sealY + 110)
+  ctx.lineTo(sealX - 15, sealY + 95)
+  ctx.lineTo(sealX + 5, sealY + 110)
+  ctx.lineTo(sealX - 5, sealY)
+  ctx.closePath()
+  ctx.fill()
+  
+  ctx.beginPath()
+  ctx.moveTo(sealX + 5, sealY)
+  ctx.lineTo(sealX + 25, sealY + 110)
+  ctx.lineTo(sealX - 5, sealY + 95)
+  ctx.lineTo(sealX - 25, sealY + 110)
+  ctx.lineTo(sealX - 15, sealY)
+  ctx.closePath()
+  ctx.fill()
+  
+  // Seal Outer Circle
+  ctx.fillStyle = '#FFE082'
+  ctx.beginPath()
+  ctx.arc(sealX, sealY, 75, 0, Math.PI * 2)
+  ctx.fill()
+  
+  ctx.fillStyle = '#E8C14A'
+  ctx.beginPath()
+  ctx.arc(sealX, sealY, 68, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Seal Rotated Text
+  ctx.save()
+  ctx.translate(sealX, sealY)
+  ctx.fillStyle = '#052014'
+  ctx.font = '900 13px sans-serif'
+  const sealText = '  OFFICIAL PASS  ·  UMMAH TWITTER MATCH  ·'
+  for (let i = 0; i < sealText.length; i++) {
+    const angle = (i * 2 * Math.PI) / sealText.length
+    ctx.save()
+    ctx.rotate(angle)
+    ctx.fillText(sealText[i], 0, -50)
+    ctx.restore()
+  }
+  ctx.restore()
+  
+  if (logoImg) {
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(sealX, sealY, 42, 0, Math.PI * 2)
+    ctx.clip()
+    ctx.drawImage(logoImg, sealX - 42, sealY - 42, 84, 84)
+    ctx.restore()
+  } else {
+    ctx.fillStyle = '#052014'
+    ctx.font = '36px sans-serif'
+    ctx.fillText('⚽', sealX, sealY + 12)
+  }
+
+  // 13. Stamped Ticket ID (Center Bottom)
+  ctx.fillStyle = 'rgba(232, 184, 75, 0.08)'
+  ctx.fillRect(820, 1180, 360, 70)
+  ctx.strokeStyle = '#e8b84b'
+  ctx.lineWidth = 1.5
+  ctx.strokeRect(820, 1180, 360, 70)
+  
+  ctx.fillStyle = '#e8b84b'
+  ctx.font = '14px sans-serif'
+  ctx.fillText('VERIFIED TICKET PASS CODE', 1000, 1205)
+  
+  ctx.fillStyle = '#FFFFFF'
+  ctx.font = 'bold 24px sans-serif'
+  ctx.fillText(ticketInfo.ticketId, 1000, 1238)
+
+  ctx.textAlign = 'left' // Reset
+
+  // 14. Convert to PDF using jsPDF
+  const imgData = canvas.toDataURL('image/png')
+  const pdf = new jsPDF({
+    orientation: 'landscape',
+    unit: 'px',
+    format: [2000, 1414]
+  })
+  pdf.addImage(imgData, 'PNG', 0, 0, 2000, 1414)
+  pdf.save(`ummah_fc_certificate_${ticketInfo.ticketId.toLowerCase()}.pdf`)
+}
 </script>
+
 
 <template>
   <div class="page">
@@ -237,12 +522,7 @@ function downloadTicket() {
 
     <!-- Logo -->
     <div class="logo-wrap">
-      <svg width="66" height="66" viewBox="0 0 52 52" fill="none" aria-label="Ummah FC" class="logo-svg">
-        <circle cx="26" cy="26" r="25" stroke="#e8b84b" stroke-width="1.5" fill="none" opacity="0.45"/>
-        <circle cx="26" cy="26" r="19" stroke="#e8b84b" stroke-width="1" fill="none" opacity="0.25"/>
-        <path d="M26 14a12 12 0 1 0 0 24 10 10 0 1 1 0-24z" fill="#e8b84b" opacity="0.88"/>
-        <polygon points="30,20 31,23.5 34.5,23.5 31.8,25.5 32.8,29 30,27 27.2,29 28.2,25.5 25.5,23.5 29,23.5" fill="#e8b84b"/>
-      </svg>
+      <img src="/logo.jpg" alt="Ummah Twitter FC Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #D4AF37; box-shadow: 0 0 16px rgba(232, 184, 75, 0.28);" />
     </div>
 
     <!-- Header -->
@@ -360,14 +640,22 @@ function downloadTicket() {
             <div class="ticket-wrapper">
               <div class="ticket-card">
                 <div class="ticket-main">
-                  <div class="ticket-logo-row">
-                    <span style="font-size: 1.25rem">⚽</span>
-                    <span class="ticket-logo-text">UMMAH FC PASS</span>
+                  <div class="ticket-logo-row" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <img src="/logo.jpg" alt="Ummah Twitter FC Logo" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold);" />
+                    <span class="ticket-logo-text">UMMAH TWITTER FC PASS</span>
                   </div>
                   <h3 class="ticket-user-name">{{ ticketInfo.name }}</h3>
-                  <span class="ticket-role-badge" :class="ticketInfo.role.toLowerCase()">
-                    {{ ticketInfo.role }}
-                  </span>
+                  <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <span class="ticket-role-badge" :class="ticketInfo.role.toLowerCase()">
+                      {{ ticketInfo.role }}
+                    </span>
+                    <span v-if="ticketInfo.twitter" class="ticket-twitter">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.85; flex-shrink: 0;">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      </svg>
+                      {{ ticketInfo.twitter }}
+                    </span>
+                  </div>
                   
                   <div class="ticket-details-row">
                     <div class="ticket-detail">
@@ -405,13 +693,25 @@ function downloadTicket() {
             </div>
 
             <!-- Download button -->
-            <button @click="downloadTicket" class="btn-download-pass" style="margin-bottom: 1rem;">
+            <button @click="downloadTicket" class="btn-download-pass" style="margin-bottom: 0.75rem;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; display: inline-block; vertical-align: middle;">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="7 10 12 15 17 10"/>
                 <line x1="12" x2="12" y1="15" y2="3"/>
               </svg>
               Download Pass (PNG)
+            </button>
+
+            <!-- Download Certificate button -->
+            <button @click="downloadCertificate" class="btn-download-cert" style="margin-bottom: 1rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; display: inline-block; vertical-align: middle;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" x2="8" y1="13" y2="13"/>
+                <line x1="16" x2="8" y1="17" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              Download Certificate of Participation (PDF)
             </button>
           </div>
 
@@ -421,7 +721,7 @@ function downloadTicket() {
 
     <footer class="page-footer">
       <p>Football · Banter · Networking</p>
-      <p>Ummah FC · 2026</p>
+      <p>Ummah Twitter FC · 2026</p>
       <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 10px; flex-wrap: wrap;">
         <router-link to="/qr" class="qr-link" title="Show QR code">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -1024,5 +1324,32 @@ select option {
 }
 .btn-download-pass:active {
   transform: scale(0.985);
+}
+.btn-download-cert {
+  background: transparent;
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+  padding: 15px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+.btn-download-cert:hover {
+  background: rgba(232, 184, 75, 0.08);
+  box-shadow: 0 4px 22px rgba(232, 184, 75, 0.15);
+}
+.btn-download-cert:active {
+  transform: scale(0.985);
+}
+.ticket-twitter {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 </style>
