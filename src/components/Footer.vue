@@ -76,12 +76,32 @@
         </div>
       </div>
 
+      <!-- Credit Banner -->
+      <div class="credit-banner">
+        <div class="credit-glow"></div>
+        <p class="credit-label">✦ Crafted with passion by</p>
+        <div class="credit-names">
+          <a
+            href="https://balogunridwan.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="credit-person"
+          >
+            <span class="credit-avatar">R</span>
+            <span class="credit-name">ridbay</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="credit-ext-icon"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+          <span class="credit-amp">&amp;</span>
+          <span class="credit-person">
+            <span class="credit-avatar alt">G</span>
+            <span class="credit-name">geekmaros</span>
+          </span>
+        </div>
+      </div>
+
       <div class="footer-bottom">
         <div>© 2026 Ummah Twitter FC. All Rights Reserved. Lagos, Nigeria.</div>
         <div>Alternative Bank Account: 0514013964</div>
-        <div class="footer-built-by">
-          Built with ❤️ by <span class="footer-built-by-names">ridbay &amp; geekmaros</span>
-        </div>
       </div>
     </div>
   </footer>
@@ -214,17 +234,106 @@
     flex-direction: row;
   }
 }
-.footer-built-by {
-  font-size: 0.7rem;
-  color: rgba(248, 250, 252, 0.45);
-  font-style: italic;
+/* Credit Banner */
+.credit-banner {
+  position: relative;
+  margin: 2.5rem 0 0;
+  padding: 1.75rem 2rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(10, 45, 29, 0.95) 0%, rgba(5, 32, 20, 0.98) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+  text-align: center;
 }
-.footer-built-by-names {
-  font-style: normal;
-  font-weight: 700;
-  background: linear-gradient(to right, #F3C64F, #A07817);
+.credit-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 80px;
+  background: radial-gradient(ellipse, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.credit-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(212, 175, 55, 0.6);
+  font-weight: 600;
+  margin: 0;
+}
+.credit-names {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.credit-person {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+a.credit-person:hover {
+  transform: translateY(-2px);
+}
+.credit-avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F3C64F, #A07817);
+  color: #052014;
+  font-weight: 900;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  flex-shrink: 0;
+}
+.credit-avatar.alt {
+  background: linear-gradient(135deg, #6ee7b7, #059669);
+  box-shadow: 0 0 12px rgba(6, 150, 105, 0.4);
+}
+.credit-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, #F3C64F 0%, #ffffff 60%, #F3C64F 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+a.credit-person .credit-name {
+  background: linear-gradient(135deg, #F3C64F 0%, #ffe599 50%, #A07817 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+.credit-ext-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: rgba(212, 175, 55, 0.5);
+  flex-shrink: 0;
+}
+.credit-amp {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: rgba(248, 250, 252, 0.3);
+  user-select: none;
+}
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
 @media print {

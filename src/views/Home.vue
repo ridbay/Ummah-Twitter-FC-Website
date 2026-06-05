@@ -559,8 +559,8 @@ function selectTeam(teamId) {
             </div>
           </div>
         </div>
-      </div  </div>
-</template>ter>
+      </div>
+    </section>
   </div>
 </template>
 
