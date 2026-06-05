@@ -21,24 +21,18 @@ function print() {
 <template>
   <div class="qr-page">
 
-    <div class="no-print top-nav">
-      <router-link to="/" class="back-link">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Check-in form
-      </router-link>
-      <button @click="print" class="btn-print">
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-          <rect x="3" y="1" width="9" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M3 10H1.5A.5.5 0 0 1 1 9.5v-4A.5.5 0 0 1 1.5 5h12a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H12" stroke="currentColor" stroke-width="1.5"/>
-          <rect x="3" y="9" width="9" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-        Print / Save
-      </button>
-    </div>
-
     <div class="card">
+      <div class="no-print" style="margin-bottom: 1.5rem; display: flex; justify-content: center;">
+        <button @click="print" class="btn-print">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+            <rect x="3" y="1" width="9" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M3 10H1.5A.5.5 0 0 1 1 9.5v-4A.5.5 0 0 1 1.5 5h12a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H12" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="3" y="9" width="9" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          Print / Save
+        </button>
+      </div>
+
       <div class="logo-row" aria-hidden="true">
         <svg width="40" height="40" viewBox="0 0 52 52" fill="none">
           <circle cx="26" cy="26" r="25" stroke="#e8b84b" stroke-width="1.5" fill="none" opacity="0.45"/>
@@ -130,7 +124,7 @@ function print() {
 
 /* ── Card ── */
 .card {
-  margin-top: 60px;
+  margin-top: 110px;
   width: 100%;
   max-width: 440px;
   background: var(--surface);

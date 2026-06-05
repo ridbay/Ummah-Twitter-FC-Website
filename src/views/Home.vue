@@ -111,33 +111,7 @@ function selectTeam(teamId) {
 
 <template>
   <div class="home-page">
-    <!-- Premium Glassmorphic Topbar Navigation -->
-    <nav class="navbar">
-      <div class="container navbar-container">
-        <div class="brand" @click="window.scrollTo({ top: 0, behavior: 'smooth' })">
-          <span style="font-size: 1.5rem">⚽</span>
-          <div>
-            <span class="brand-title">UMMAH FC</span>
-            <span class="brand-subtitle">Brotherhood Beyond the Pitch</span>
-          </div>
-        </div>
-        
-        <div class="nav-links">
-          <button @click="scrollToSection('about')">About</button>
-          <button @click="scrollToSection('teams')">The Teams</button>
-          <button @click="scrollToSection('rules')">Format & Scoring</button>
-          <button @click="scrollToSection('leadership')">Leadership</button>
-          <button @click="scrollToSection('constitution')">Constitution</button>
-          <button @click="scrollToSection('registration')">Admission</button>
-        </div>
-
-        <div>
-          <router-link to="/register" class="gold-button" style="font-size: 0.75rem; padding: 0.625rem 1.25rem;">
-            Get Spectator Pass
-          </router-link>
-        </div>
-      </div>
-    </nav>
+    <!-- Shared header rendered globally via App.vue -->
 
     <!-- Hero Section -->
     <section class="hero">
@@ -176,7 +150,10 @@ function selectTeam(teamId) {
                 <path d="m9 18 6-6-6-6"/>
               </svg>
             </router-link>
-            <button @click="scrollToSection('teams')" class="outline-gold-button" style="padding: 0.875rem 2rem; font-size: 1rem;">
+            <router-link to="/schedule" class="outline-gold-button" style="padding: 0.875rem 2rem; font-size: 1rem;">
+              View Game Schedule
+            </router-link>
+            <button @click="scrollToSection('teams')" class="outline-gold-button" style="padding: 0.875rem 2rem; font-size: 1rem; border-color: rgba(248, 250, 252, 0.3); color: #F8FAFC;">
               Meet the Teams
             </button>
           </div>
@@ -205,7 +182,7 @@ function selectTeam(teamId) {
             </div>
           </div>
 
-          <div class="info-card">
+          <a href="https://www.google.com/maps/place/Landmark+College,+Ikorodu/data=!4m2!3m1!1s0x0:0x5f683c00ec0c6aeb?sa=X&ved=1t:2428&ictx=111" target="_blank" rel="noopener noreferrer" class="info-card map-card">
             <div class="info-icon-wrapper">
               <!-- MapPin Icon -->
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;">
@@ -214,13 +191,13 @@ function selectTeam(teamId) {
               </svg>
             </div>
             <div>
-              <p class="info-label">Match Venue</p>
-              <h4 class="info-title">Landmark Intl. School</h4>
+              <p class="info-label">Match Venue ↗</p>
+              <h4 class="info-title">Landmark College</h4>
               <p class="info-desc">Ikorodu, Lagos, Nigeria</p>
             </div>
-          </div>
+          </a>
 
-          <div class="info-card">
+          <router-link to="/register" class="info-card map-card">
             <div class="info-icon-wrapper">
               <!-- Mail Icon -->
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;">
@@ -229,11 +206,11 @@ function selectTeam(teamId) {
               </svg>
             </div>
             <div>
-              <p class="info-label">Attendee Gift</p>
+              <p class="info-label">Attendee Gift ↗</p>
               <h4 class="info-title">Participant Certificate</h4>
-              <p class="info-desc">Delivered directly to your email</p>
+              <p class="info-desc">Claim your pass to receive it</p>
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
     </section>
@@ -698,6 +675,18 @@ function selectTeam(teamId) {
           </div>
 
           <div>
+            <h4 class="footer-title">Quick Links</h4>
+            <ul class="footer-links">
+              <li><button @click="scrollToSection('about')" class="footer-nav-btn">About</button></li>
+              <li><button @click="scrollToSection('teams')" class="footer-nav-btn">The Teams</button></li>
+              <li><router-link to="/schedule" style="color: inherit; text-decoration: none;">Game Schedule</router-link></li>
+              <li><button @click="scrollToSection('rules')" class="footer-nav-btn">Format & Scoring</button></li>
+              <li><button @click="scrollToSection('leadership')" class="footer-nav-btn">Leadership</button></li>
+              <li><button @click="scrollToSection('constitution')" class="footer-nav-btn">Constitution</button></li>
+            </ul>
+          </div>
+
+          <div>
             <h4 class="footer-title">Official Channels</h4>
             <ul class="footer-links">
               <li>
@@ -836,7 +825,8 @@ function selectTeam(teamId) {
     letter-spacing: 0.025em;
   }
 }
-.nav-links button {
+.nav-links button,
+.nav-link-a {
   background: none;
   border: none;
   color: #F8FAFC;
@@ -844,8 +834,10 @@ function selectTeam(teamId) {
   font-weight: 500;
   transition: color 0.2s;
   font-size: inherit;
+  text-decoration: none;
 }
-.nav-links button:hover {
+.nav-links button:hover,
+.nav-link-a:hover {
   color: #D4AF37;
 }
 
@@ -1762,8 +1754,30 @@ function selectTeam(teamId) {
 }
 @media (min-width: 768px) {
   .footer-grid {
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
   }
+}
+.footer-nav-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  transition: color 0.2s;
+}
+.footer-nav-btn:hover {
+  color: #D4AF37;
+}
+.info-card.map-card {
+  text-decoration: none;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.info-card.map-card:hover {
+  border-color: #D4AF37;
+  transform: translateY(-2px);
 }
 .footer-about {
   display: flex;

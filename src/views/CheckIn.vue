@@ -7,6 +7,8 @@ const state = ref('idle') // idle | loading | success | error
 const errorMsg = ref('')
 const successName = ref('')
 
+const ticketInfo = reactive({ name: '', role: '', ticketId: '' })
+
 async function handleSubmit() {
   if (!form.name.trim())  return setError('Please enter your full name.')
   if (!form.email.trim()) return setError('Please enter your email address.')
@@ -17,12 +19,12 @@ async function handleSubmit() {
 
   const twitter = form.twitter.trim().replace(/^@+/, '')
 
-  const { error } = await supabase.from('checkins').insert({
+  const { data, error } = await supabase.from('checkins').insert({
     name:    form.name.trim(),
     twitter: twitter ? `@${twitter}` : null,
     email:   form.email.trim().toLowerCase(),
     role:    form.role,
-  })
+  }).select()
 
   if (error) {
     state.value = 'error'
@@ -32,6 +34,13 @@ async function handleSubmit() {
     return
   }
 
+  const insertedRow = data && data[0]
+  const uniqueSuffix = insertedRow ? String(insertedRow.id).slice(-4).toUpperCase() : Math.floor(1000 + Math.random() * 9000)
+  
+  ticketInfo.name = form.name.trim()
+  ticketInfo.role = form.role
+  ticketInfo.ticketId = `UM-${uniqueSuffix}`
+
   successName.value = form.name.trim().split(' ')[0]
   state.value = 'success'
 }
@@ -39,6 +48,149 @@ async function handleSubmit() {
 function setError(msg) {
   errorMsg.value = msg
   state.value = 'error'
+}
+
+function downloadTicket() {
+  const canvas = document.createElement('canvas')
+  canvas.width = 1200
+  canvas.height = 675
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  // 1. Forest Green Background
+  ctx.fillStyle = '#052014'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // 2. Soccer watermark/circles
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.04)'
+  ctx.lineWidth = 4
+  ctx.beginPath()
+  ctx.arc(canvas.width - 200, canvas.height / 2, 220, 0, Math.PI * 2)
+  ctx.stroke()
+  
+  ctx.beginPath()
+  ctx.arc(canvas.width - 200, canvas.height / 2, 150, 0, Math.PI * 2)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.arc(canvas.width - 200, canvas.height / 2, 80, 0, Math.PI * 2)
+  ctx.stroke()
+
+  // 3. Gold border
+  ctx.strokeStyle = '#e8b84b'
+  ctx.lineWidth = 6
+  ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60)
+
+  // 4. Inner green border
+  ctx.strokeStyle = '#27523d'
+  ctx.lineWidth = 2
+  ctx.strokeRect(45, 45, canvas.width - 90, canvas.height - 90)
+
+  // 5. Ticket Cutouts
+  ctx.fillStyle = '#08080e' // Match background outside ticket
+  ctx.beginPath()
+  ctx.arc(45, canvas.height / 2, 40, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.strokeStyle = '#e8b84b'
+  ctx.lineWidth = 4
+  ctx.beginPath()
+  ctx.arc(45, canvas.height / 2, 40, -Math.PI/2, Math.PI/2)
+  ctx.stroke()
+
+  ctx.fillStyle = '#08080e'
+  ctx.beginPath()
+  ctx.arc(canvas.width - 45, canvas.height / 2, 40, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.strokeStyle = '#e8b84b'
+  ctx.lineWidth = 4
+  ctx.beginPath()
+  ctx.arc(canvas.width - 45, canvas.height / 2, 40, Math.PI/2, -Math.PI/2)
+  ctx.stroke()
+
+  // 6. Dashed separator
+  ctx.strokeStyle = 'rgba(232, 184, 75, 0.3)'
+  ctx.lineWidth = 4
+  ctx.setLineDash([15, 10])
+  ctx.beginPath()
+  ctx.moveTo(canvas.width - 320, 60)
+  ctx.lineTo(canvas.width - 320, canvas.height - 60)
+  ctx.stroke()
+  ctx.setLineDash([])
+
+  // 7. Headers
+  ctx.fillStyle = '#FFFFFF'
+  ctx.font = 'bold 36px sans-serif'
+  ctx.fillText('⚽ UMMAH FC', 80, 100)
+
+  ctx.fillStyle = '#e8b84b'
+  ctx.font = 'bold 20px sans-serif'
+  ctx.fillText('OFFICIAL SPECTATOR ENTRY PASS', 80, 140)
+
+  // 8. Name
+  ctx.fillStyle = '#FFFFFF'
+  ctx.font = 'bold 56px sans-serif'
+  ctx.fillText(ticketInfo.name, 80, 260)
+
+  // 9. Role Badge
+  const roleText = ticketInfo.role.toUpperCase()
+  ctx.fillStyle = '#0a2d1d'
+  ctx.fillRect(80, 300, 160, 48)
+  ctx.strokeStyle = '#27523d'
+  ctx.lineWidth = 2
+  ctx.strokeRect(80, 300, 160, 48)
+
+  ctx.fillStyle = '#e8b84b'
+  ctx.font = 'bold 22px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(roleText, 160, 332)
+  ctx.textAlign = 'left' // Reset
+
+  // 10. Info details
+  ctx.fillStyle = 'rgba(248, 250, 252, 0.75)'
+  ctx.font = '24px sans-serif'
+  ctx.fillText('📅 Saturday, June 6, 2026', 80, 420)
+  ctx.fillText('📍 Landmark College, Ikorodu', 80, 470)
+  ctx.fillText('⏰ 8:00 AM Prompt', 80, 520)
+
+  // 11. Stub details
+  ctx.fillStyle = '#e8b84b'
+  ctx.font = 'bold 20px sans-serif'
+  ctx.fillText('TICKET CODE', canvas.width - 270, 220)
+
+  ctx.fillStyle = '#FFFFFF'
+  ctx.font = 'bold 44px sans-serif'
+  ctx.fillText(ticketInfo.ticketId, canvas.width - 270, 280)
+
+  ctx.fillStyle = 'rgba(248, 250, 252, 0.5)'
+  ctx.font = '16px sans-serif'
+  ctx.fillText('Scan at the gates for entry', canvas.width - 270, 320)
+
+  // Barcode graphics
+  ctx.fillStyle = 'rgba(232, 184, 75, 0.15)'
+  const barcodeX = canvas.width - 270
+  const barcodeY = 370
+  const barcodeWidth = 220
+  const barcodeHeight = 80
+  ctx.fillRect(barcodeX, barcodeY, barcodeWidth, barcodeHeight)
+  
+  ctx.fillStyle = '#052014'
+  let lineOffset = 10
+  while (lineOffset < barcodeWidth - 10) {
+    const lineWidth = Math.floor(Math.random() * 5) + 2
+    ctx.fillRect(barcodeX + lineOffset, barcodeY + 5, lineWidth, barcodeHeight - 10)
+    lineOffset += lineWidth + Math.floor(Math.random() * 6) + 3
+  }
+
+  ctx.fillStyle = '#e8b84b'
+  ctx.font = 'bold 16px sans-serif'
+  ctx.fillText('BROTHERHOOD BEYOND THE PITCH', canvas.width - 290, 580)
+
+  // Download Action
+  const image = canvas.toDataURL('image/png')
+  const link = document.createElement('a')
+  link.download = `ummah_fc_pass_${ticketInfo.ticketId.toLowerCase()}.png`
+  link.href = image
+  link.click()
 }
 </script>
 
@@ -190,9 +342,67 @@ function setError(msg) {
                 <path d="M6 15.5l7.5 7.5 10.5-13" stroke="#3dd68c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <h2>You're in!</h2>
-            <p>Welcome, <span class="success-name">{{ successName }}</span>.</p>
-            <p class="success-sub">See you on the pitch ⚽</p>
+            <h2>You're registered!</h2>
+            <p>Welcome, <span class="success-name">{{ ticketInfo.name }}</span>.</p>
+            <p class="success-sub" style="margin-bottom: 24px;">Your spectator pass has been generated. Download it below and present it at the gate.</p>
+
+            <!-- CSS Ticket Pass -->
+            <div class="ticket-wrapper">
+              <div class="ticket-card">
+                <div class="ticket-main">
+                  <div class="ticket-logo-row">
+                    <span style="font-size: 1.25rem">⚽</span>
+                    <span class="ticket-logo-text">UMMAH FC PASS</span>
+                  </div>
+                  <h3 class="ticket-user-name">{{ ticketInfo.name }}</h3>
+                  <span class="ticket-role-badge" :class="ticketInfo.role.toLowerCase()">
+                    {{ ticketInfo.role }}
+                  </span>
+                  
+                  <div class="ticket-details-row">
+                    <div class="ticket-detail">
+                      <span class="detail-label">Date</span>
+                      <span class="detail-value">Saturday, June 6</span>
+                    </div>
+                    <div class="ticket-detail">
+                      <span class="detail-label">Venue</span>
+                      <span class="detail-value">Landmark College</span>
+                    </div>
+                    <div class="ticket-detail">
+                      <span class="detail-label">Time</span>
+                      <span class="detail-value">8:00 AM Prompt</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ticket-stub">
+                  <div class="stub-divider"></div>
+                  <span class="stub-label">Ticket ID</span>
+                  <span class="stub-value">{{ ticketInfo.ticketId }}</span>
+                  <div class="stub-barcode" aria-hidden="true">
+                    <div class="barcode-line" style="width: 2px;"></div>
+                    <div class="barcode-line" style="width: 4px;"></div>
+                    <div class="barcode-line" style="width: 1px;"></div>
+                    <div class="barcode-line" style="width: 3px;"></div>
+                    <div class="barcode-line" style="width: 5px;"></div>
+                    <div class="barcode-line" style="width: 2px;"></div>
+                    <div class="barcode-line" style="width: 4px;"></div>
+                    <div class="barcode-line" style="width: 1px;"></div>
+                    <div class="barcode-line" style="width: 3px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Download button -->
+            <button @click="downloadTicket" class="btn-download-pass" style="margin-bottom: 1rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; display: inline-block; vertical-align: middle;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" x2="12" y1="15" y2="3"/>
+              </svg>
+              Download Pass (PNG)
+            </button>
           </div>
 
         </Transition>
@@ -202,18 +412,23 @@ function setError(msg) {
     <footer class="page-footer">
       <p>Football · Banter · Networking</p>
       <p>Ummah FC · 2026</p>
-      <router-link to="/qr" class="qr-link" title="Show QR code">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <rect x="1" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
-          <rect x="8" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
-          <rect x="1" y="8" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
-          <rect x="2.5" y="2.5" width="2" height="2" fill="currentColor"/>
-          <rect x="9.5" y="2.5" width="2" height="2" fill="currentColor"/>
-          <rect x="2.5" y="9.5" width="2" height="2" fill="currentColor"/>
-          <path d="M8 8.5h1.5v1.5H8zM10.5 8.5H12V10h-1.5zM8 11h1.5v2H8zM10.5 10.5H12V12h-1.5z" fill="currentColor"/>
-        </svg>
-        Show QR code
-      </router-link>
+      <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 10px; flex-wrap: wrap;">
+        <router-link to="/qr" class="qr-link" title="Show QR code">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="8" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="1" y="8" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="2.5" y="2.5" width="2" height="2" fill="currentColor"/>
+            <rect x="9.5" y="2.5" width="2" height="2" fill="currentColor"/>
+            <rect x="2.5" y="9.5" width="2" height="2" fill="currentColor"/>
+            <path d="M8 8.5h1.5v1.5H8zM10.5 8.5H12V10h-1.5zM8 11h1.5v2H8zM10.5 10.5H12V12h-1.5z" fill="currentColor"/>
+          </svg>
+          Show QR code
+        </router-link>
+        <router-link to="/schedule" class="qr-link" title="View Game Schedule">
+          ⚽ View Schedule
+        </router-link>
+      </div>
     </footer>
 
   </div>
@@ -225,7 +440,7 @@ function setError(msg) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 36px 16px 56px;
+  padding: 90px 16px 56px;
   position: relative;
   overflow: hidden;
 }
@@ -628,5 +843,176 @@ select option {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ── CSS Ticket ── */
+.ticket-wrapper {
+  margin: 1.5rem 0 2rem;
+  perspective: 1000px;
+}
+.ticket-card {
+  display: flex;
+  background: #052014;
+  border: 1.5px solid var(--gold);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+.ticket-card::before,
+.ticket-card::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: var(--surface);
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  z-index: 5;
+}
+.ticket-card::before {
+  top: -11px;
+  right: 110px;
+}
+.ticket-card::after {
+  bottom: -11px;
+  right: 110px;
+}
+
+.ticket-main {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ticket-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ticket-logo-text {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.ticket-user-name {
+  font-size: 20px;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0.25rem 0;
+  line-height: 1.2;
+}
+.ticket-role-badge {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background-color: rgba(232, 184, 75, 0.1);
+  border: 1px solid rgba(232, 184, 75, 0.3);
+  color: var(--gold);
+}
+.ticket-role-badge.player {
+  background-color: rgba(75, 168, 232, 0.1);
+  border-color: rgba(75, 168, 232, 0.3);
+  color: var(--blue);
+}
+
+.ticket-details-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  border-top: 1px dashed rgba(39, 82, 61, 0.5);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+.ticket-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.detail-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+.detail-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.ticket-stub {
+  width: 120px;
+  padding: 1.5rem 1rem;
+  background-color: rgba(10, 45, 29, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+}
+.stub-divider {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 0;
+  border-left: 2px dashed rgba(232, 184, 75, 0.3);
+}
+.stub-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+.stub-value {
+  font-size: 16px;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin-top: 0.25rem;
+  letter-spacing: 0.05em;
+}
+.stub-barcode {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  height: 36px;
+  margin-top: 1rem;
+  opacity: 0.6;
+}
+.barcode-line {
+  background-color: var(--gold);
+  height: 100%;
+}
+
+.btn-download-pass {
+  background: linear-gradient(135deg, #F3C64F 0%, #D4AF37 50%, #B89020 100%);
+  color: #052014;
+  border: none;
+  padding: 15px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+.btn-download-pass:hover {
+  background: linear-gradient(135deg, #FFE082 0%, #E8C14A 50%, #CFA52D 100%);
+  box-shadow: 0 4px 22px rgba(232, 184, 75, 0.35);
+}
+.btn-download-pass:active {
+  transform: scale(0.985);
 }
 </style>
