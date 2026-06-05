@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import TwitterFeed from '../components/TwitterFeed.vue'
 
 const selectedTeam = ref(null)
 
@@ -299,6 +300,9 @@ function selectTeam(teamId) {
         </div>
       </div>
     </section>
+
+    <!-- Live Tweet Feed -->
+    <TwitterFeed />
 
     <!-- Twitter/X CTA Banner -->
     <section class="section tweet-section">
