@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue'
 import { supabase } from '../lib/supabase.js'
 import { jsPDF } from 'jspdf'
 
-const form = reactive({ name: '', twitter: '', email: '', role: '' })
+const form = reactive({ name: '', twitter: '', email: '', role: 'Fan' })
 const state = ref('idle') // idle | loading | success | error
 const errorMsg = ref('')
 const successName = ref('')
@@ -13,7 +13,6 @@ const ticketInfo = reactive({ name: '', role: '', ticketId: '', twitter: '' })
 async function handleSubmit() {
   if (!form.name.trim())  return setError('Please enter your full name.')
   if (!form.email.trim()) return setError('Please enter your email address.')
-  if (!form.role)         return setError('Please select your role.')
 
   state.value = 'loading'
   errorMsg.value = ''
@@ -576,7 +575,7 @@ async function downloadCertificate() {
               </div>
             </div>
 
-            <div class="field">
+            <div class="field last">
               <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
               <input
                 v-model="form.email"
@@ -584,22 +583,6 @@ async function downloadCertificate() {
                 placeholder="you@example.com"
                 required autocomplete="email" inputmode="email"
               />
-            </div>
-
-            <div class="field last">
-              <label for="role">Attending as <span class="req" aria-hidden="true">*</span></label>
-              <div class="select-wrap">
-                <select v-model="form.role" id="role" name="role" required>
-                  <option value="" disabled>Select role</option>
-                  <option value="Player">Player</option>
-                  <option value="Fan">Fan</option>
-                </select>
-                <span class="chevron" aria-hidden="true">
-                  <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
-                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </div>
             </div>
 
             <button type="submit" class="btn-submit" :class="{ loading: state === 'loading' }" :disabled="state === 'loading'">
