@@ -516,232 +516,51 @@ function selectTeam(teamId) {
       </div>
     </section>
 
-    <!-- Pricing & Admission Section -->
-    <section id="registration" class="section pricing-section">
+    <!-- Twitter/X CTA Banner -->
+    <section class="section tweet-section">
       <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">ADMISSION & TICKETS</h2>
-          <div class="section-divider"></div>
-          <p class="section-subtitle">
-            Register for your entry pass or order official jerseys. Payments for jerseys are handled via bank transfer.
-          </p>
-        </div>
-
-        <div class="pricing-grid">
-          <!-- Spectator Admission - Highlighted Primary Card -->
-          <div class="pricing-card spectator">
-            <div class="pricing-badge">Mandatory</div>
-            <div>
-              <div class="pricing-icon">
-                <!-- Ticket Icon -->
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;">
-                  <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
-                  <path d="M13 5v2"/>
-                  <path d="M13 17v2"/>
-                  <path d="M13 11v2"/>
-                </svg>
+        <div class="tweet-banner">
+          <div class="tweet-banner-glow"></div>
+          <div class="tweet-banner-content">
+            <div class="tweet-x-icon">
+              <!-- X/Twitter logo -->
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width: 2.5rem; height: 2.5rem;">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.742-8.855L1.564 2.25h6.391l4.254 5.622 5.834-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </div>
+            <div class="tweet-banner-text">
+              <h2 class="tweet-banner-title">Join the Conversation</h2>
+              <p class="tweet-banner-sub">Share the excitement on X (Twitter) — follow us and tag your posts!</p>
+              <div class="tweet-tags">
+                <span class="tweet-tag-pill hashtag">#UmmahTwitterMatch2026</span>
+                <span class="tweet-tag-pill handle">@MuslimUmmahFC</span>
               </div>
-              <h3 class="pricing-title">Spectator Entry</h3>
-              <p class="pricing-subtitle">Gate Pass Required</p>
-              <div class="pricing-price">FREE</div>
-              
-              <ul class="pricing-features">
-                <li class="pricing-feature-item">
-                  <span>✓</span> Required for Stadium Entry
-                </li>
-                <li class="pricing-feature-item">
-                  <span>✓</span> Digital Certificate of Participation
-                </li>
-                <li class="pricing-feature-item">
-                  <span>✓</span> Full Access to Matches
-                </li>
-                <li class="pricing-feature-item">
-                  <span>✓</span> Community Banter & Vibes
-                </li>
-              </ul>
             </div>
-            
-            <router-link to="/register" class="gold-button" style="width: 100%; padding: 0.875rem; font-weight: 700;">
-              Register for Gate Pass
-            </router-link>
-          </div>
-
-          <!-- Supporter -->
-          <div class="pricing-card">
-            <div>
-              <div class="pricing-icon">
-                <!-- Users Icon -->
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            <div class="tweet-banner-actions">
+              <a
+                :href="`https://twitter.com/intent/tweet?text=${encodeURIComponent('🔥 The Ummah Twitter FC match is happening! Follow @MuslimUmmahFC for live updates and join the conversation. #UmmahTwitterMatch2026')}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="tweet-btn"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.1rem; height: 1.1rem;">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.742-8.855L1.564 2.25h6.391l4.254 5.622 5.834-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
-              </div>
-              <h3 class="pricing-title">Supporter Jersey</h3>
-              <p class="pricing-subtitle">Premium Merch</p>
-              <div class="pricing-price">₦7,000</div>
-              
-              <ul class="pricing-features">
-                <li class="pricing-feature-item">
-                  <span>✓</span> Official Fan Jersey (Adults)
-                </li>
-                <li class="pricing-feature-item">
-                  <span>✓</span> High Quality Premium fabric
-                </li>
-                <li class="pricing-feature-item">
-                  <span>✓</span> Connect & represent your Caliph team
-                </li>
-              </ul>
+                Tweet This
+              </a>
+              <a
+                href="https://x.com/MuslimUmmahFC"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="follow-btn"
+              >
+                Follow @MuslimUmmahFC
+              </a>
             </div>
-            
-            <button @click="scrollToSection('payment')" class="outline-gold-button" style="width: 100%; padding: 0.75rem; font-weight: 600;">
-              Order Fan Jersey
-            </button>
-          </div>
-
-          <!-- Kids -->
-          <div class="pricing-card">
-            <div>
-              <div class="pricing-icon">
-                <!-- Star Icon -->
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-              </div>
-              <h3 class="pricing-title">Kids Jersey</h3>
-              <p class="pricing-subtitle">Youth Sizes</p>
-              <div class="pricing-price">₦5,000</div>
-              
-              <ul class="pricing-features">
-                <li class="pricing-feature-item">
-                  <span>✓</span> Official Fan Jersey (Kids/Youth)
-                </li>
-                <li class="pricing-feature-item">
-                  <span>✓</span> Family unity match gear
-                </li>
-                <li class="pricing-feature-item">
-                  <span>✓</span> Engaging the next generation
-                </li>
-              </ul>
-            </div>
-            
-            <button @click="scrollToSection('payment')" class="outline-gold-button" style="width: 100%; padding: 0.75rem; font-weight: 600;">
-              Order Kids Jersey
-            </button>
           </div>
         </div>
-
-        <!-- Payment details matching Article 7 of the constitution -->
-        <div id="payment" class="payment-card">
-          <h3 class="payment-title">Official Bank Account Details</h3>
-          
-          <div class="payment-details">
-            <div>
-              <span class="payment-label">Bank Name</span>
-              <span class="payment-value">The Alternative Bank</span>
-            </div>
-            <div>
-              <span class="payment-label">Account Name</span>
-              <span class="payment-value">UMMAH TWITTER FC</span>
-            </div>
-            <div>
-              <span class="payment-label">Account Number</span>
-              <span class="payment-value account-number">0514013964</span>
-            </div>
-          </div>
-
-          <div class="payment-notice">
-            ⚠️ In line with <strong>Article 7</strong> of the constitution, all sponsorship donations and jersey purchase funds must be transferred to the corporate account. Please send your transaction proof and spectator registration details to <strong>ummahfc@gmail.com</strong>.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-about">
-            <div class="footer-logo">
-              <img src="/logo.jpg" alt="Ummah FC Logo" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid #D4AF37; margin-right: 0.5rem; display: inline-block; vertical-align: middle;" />
-              <span class="brand-title" style="font-size: 1.5rem; display: inline; vertical-align: middle;">UMMAH FC</span>
-            </div>
-            <p class="footer-desc">
-              Fostering unity, teamwork, and brotherhood among the Muslim youth in Nigeria. Utilizing sports to build relationships that extend past the field and into Jannah.
-            </p>
-            <div class="footer-tagline">
-              Lagos, Nigeria • Brotherhood Beyond the Pitch
-            </div>
-          </div>
-
-          <div>
-            <h4 class="footer-title">Quick Links</h4>
-            <ul class="footer-links">
-              <li><button @click="scrollToSection('about')" class="footer-nav-btn">About</button></li>
-              <li><button @click="scrollToSection('teams')" class="footer-nav-btn">The Teams</button></li>
-              <li><router-link to="/schedule" style="color: inherit; text-decoration: none;">Game Schedule</router-link></li>
-              <li><button @click="scrollToSection('rules')" class="footer-nav-btn">Format & Scoring</button></li>
-              <li><button @click="scrollToSection('leadership')" class="footer-nav-btn">Leadership</button></li>
-              <li><button @click="scrollToSection('constitution')" class="footer-nav-btn">Constitution</button></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="footer-title">Official Channels</h4>
-            <ul class="footer-links">
-              <li>
-                <!-- Phone Icon -->
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem; color: #D4AF37;">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-                <a href="tel:09169015718">09169015718</a>
-              </li>
-              <li>
-                <!-- Mail Icon -->
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem; color: #D4AF37;">
-                  <rect width="20" height="16" x="2" y="4" rx="2"/>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                </svg>
-                <a href="mailto:ummahfc@gmail.com">ummahfc@gmail.com</a>
-              </li>
-              <li class="footer-support">
-                Support: <a href="mailto:quincysdesign@gmail.com">quincysdesign@gmail.com</a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="footer-title">Social Media</h4>
-            <ul class="footer-links">
-              <li>
-                <a 
-                  href="https://x.com/MuslimUmmahFC" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style="color: #D4AF37; font-weight: 600;"
-                >
-                  @MuslimUmmahFC
-                </a>
-              </li>
-              <li class="footer-hashtags">
-                Tag us on Twitter/X with:
-                <span class="footer-hashtag-bold">#UmmahTwitterMatch2026</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <div>
-            © 2026 Ummah Twitter FC. All Rights Reserved. Lagos, Nigeria.
-          </div>
-          <div>
-            Alternative Bank Account: 0514013964
-          </div>
-        </div>
-      </div>
-    </footer>
+      </div  </div>
+</template>ter>
   </div>
 </template>
 
@@ -1875,6 +1694,19 @@ function selectTeam(teamId) {
   .footer-bottom {
     flex-direction: row;
   }
+}
+
+.footer-built-by {
+  font-size: 0.7rem;
+  color: rgba(248, 250, 252, 0.45);
+  font-style: italic;
+}
+.footer-built-by-names {
+  font-style: normal;
+  font-weight: 700;
+  background: linear-gradient(to right, #F3C64F, #A07817);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Animations */
