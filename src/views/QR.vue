@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import QRCode from 'qrcode'
 
 const qrDataUrl = ref('')
-const checkinUrl = window.location.origin + '/'
+const checkinUrl = window.location.origin + '/register'
 
 onMounted(async () => {
   qrDataUrl.value = await QRCode.toDataURL(checkinUrl, {
