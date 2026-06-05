@@ -126,9 +126,14 @@ function downloadTicket() {
   ctx.font = 'bold 20px sans-serif'
   ctx.fillText('OFFICIAL SPECTATOR ENTRY PASS', 80, 140)
 
-  // 8. Name
+  // 8. Name with dynamic font scaling to fit the ticket area
   ctx.fillStyle = '#FFFFFF'
-  ctx.font = 'bold 56px sans-serif'
+  let nameFontSize = 56
+  ctx.font = `bold ${nameFontSize}px sans-serif`
+  while (ctx.measureText(ticketInfo.name).width > 700 && nameFontSize > 24) {
+    nameFontSize -= 4
+    ctx.font = `bold ${nameFontSize}px sans-serif`
+  }
   ctx.fillText(ticketInfo.name, 80, 260)
 
   // 9. Role Badge
@@ -152,25 +157,28 @@ function downloadTicket() {
   ctx.fillText('📍 Landmark College, Ikorodu', 80, 470)
   ctx.fillText('⏰ 8:00 AM Prompt', 80, 520)
 
-  // 11. Stub details
+  // 11. Stub details (Centered inside the right ticket stub, X=1025)
+  ctx.textAlign = 'center'
+  
   ctx.fillStyle = '#e8b84b'
   ctx.font = 'bold 20px sans-serif'
-  ctx.fillText('TICKET CODE', canvas.width - 270, 220)
+  ctx.fillText('TICKET CODE', 1025, 220)
 
   ctx.fillStyle = '#FFFFFF'
   ctx.font = 'bold 44px sans-serif'
-  ctx.fillText(ticketInfo.ticketId, canvas.width - 270, 280)
+  ctx.fillText(ticketInfo.ticketId, 1025, 280)
 
   ctx.fillStyle = 'rgba(248, 250, 252, 0.5)'
-  ctx.font = '16px sans-serif'
-  ctx.fillText('Scan at the gates for entry', canvas.width - 270, 320)
+  ctx.font = '14px sans-serif'
+  ctx.fillText('Scan at the gates for entry', 1025, 320)
 
-  // Barcode graphics
-  ctx.fillStyle = 'rgba(232, 184, 75, 0.15)'
-  const barcodeX = canvas.width - 270
-  const barcodeY = 370
+  // Barcode graphics centered
   const barcodeWidth = 220
   const barcodeHeight = 80
+  const barcodeX = 1025 - (barcodeWidth / 2)
+  const barcodeY = 360
+  
+  ctx.fillStyle = 'rgba(232, 184, 75, 0.15)'
   ctx.fillRect(barcodeX, barcodeY, barcodeWidth, barcodeHeight)
   
   ctx.fillStyle = '#052014'
@@ -182,8 +190,10 @@ function downloadTicket() {
   }
 
   ctx.fillStyle = '#e8b84b'
-  ctx.font = 'bold 16px sans-serif'
-  ctx.fillText('BROTHERHOOD BEYOND THE PITCH', canvas.width - 290, 580)
+  ctx.font = 'bold 12px sans-serif'
+  ctx.fillText('BROTHERHOOD BEYOND THE PITCH', 1025, 580)
+  
+  ctx.textAlign = 'left' // Reset
 
   // Download Action
   const image = canvas.toDataURL('image/png')
