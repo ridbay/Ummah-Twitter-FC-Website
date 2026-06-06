@@ -355,7 +355,7 @@ async function downloadTicket() {
             <p class="card-title">Event Check-In</p>
 
             <div class="field">
-              <label for="name">Full Name <span class="req" aria-hidden="true">*</span></label>
+              <label for="name">What's your full name? <span class="req" aria-hidden="true">*</span></label>
               <input
                 v-model="form.name"
                 type="text" id="name" name="name"
@@ -365,7 +365,7 @@ async function downloadTicket() {
             </div>
 
             <div class="field">
-              <label for="twitter">Twitter / X Handle</label>
+              <label for="twitter">Your Twitter / X Handle</label>
               <div class="input-wrap">
                 <span class="prefix" aria-hidden="true">@</span>
                 <input
@@ -379,7 +379,7 @@ async function downloadTicket() {
             </div>
 
             <div class="field">
-              <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+              <label for="email">Where should we send your pass? <span class="req" aria-hidden="true">*</span></label>
               <input
                 v-model="form.email"
                 type="email" id="email" name="email"
@@ -389,7 +389,7 @@ async function downloadTicket() {
             </div>
 
             <div class="field">
-              <label for="role">Attending As<span class="req" aria-hidden="true">*</span></label>
+              <label for="role">Attending As <span class="req" aria-hidden="true">*</span></label>
               <div class="select-wrap">
                 <select v-model="form.role" id="role" name="role" required>
                   <option value="Fan">Fan</option>
@@ -404,7 +404,7 @@ async function downloadTicket() {
             </div>
 
             <div class="field last">
-              <label for="supporting">Supporting Team <span class="req" aria-hidden="true">*</span></label>
+              <label for="supporting">Who are you cheering for? <span class="req" aria-hidden="true">*</span></label>
               <div class="select-wrap">
                 <select v-model="form.supporting" id="supporting" name="supporting" required>
                   <option value="Neutral">Neutral</option>
