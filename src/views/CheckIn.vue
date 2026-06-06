@@ -389,7 +389,7 @@ async function downloadTicket() {
             </div>
 
             <div class="field">
-              <label for="role">Role <span class="req" aria-hidden="true">*</span></label>
+              <label for="role">Attending As<span class="req" aria-hidden="true">*</span></label>
               <div class="select-wrap">
                 <select v-model="form.role" id="role" name="role" required>
                   <option value="Fan">Fan</option>
