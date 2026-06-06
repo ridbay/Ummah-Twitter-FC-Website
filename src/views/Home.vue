@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { supabase } from '../lib/supabase.js'
 import TwitterFeed from '../components/TwitterFeed.vue'
 
 const selectedTeam = ref(null)
@@ -46,6 +47,65 @@ const teams = [
 function selectTeam(teamId) {
   selectedTeam.value = selectedTeam.value === teamId ? null : teamId
 }
+
+const teamStats = ref([])
+
+async function loadStats() {
+  const { data, error } = await supabase
+    .from('team_stats')
+    .select('*')
+    .order('pts', { ascending: false })
+    .order('gd', { ascending: false })
+    .order('gf', { ascending: false })
+    
+  if (!error && data) {
+    teamStats.value = data
+  }
+}
+
+let channel
+onMounted(() => {
+  loadStats()
+  channel = supabase
+    .channel('public:team_stats_home')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'team_stats' }, () => {
+      loadStats()
+    })
+    .subscribe()
+})
+
+onUnmounted(() => {
+  if (channel) channel.unsubscribe()
+})
+
+const displayTeams = computed(() => {
+  if (teamStats.value.length === 0) {
+    return teams.map(t => ({
+      name: t.name,
+      dotColor: t.color.includes('cyan') ? '#22d3ee' :
+                t.color.includes('amber') ? '#fbbf24' :
+                t.color.includes('slate') ? '#cbd5e1' : '#34d399',
+      played: '—', gd: '—', gf: '—', pts: '—'
+    }))
+  }
+  
+  return teamStats.value.map(stat => {
+    const t = teams.find(x => x.name === stat.name)
+    const dotColor = t ? (
+      t.color.includes('cyan') ? '#22d3ee' :
+      t.color.includes('amber') ? '#fbbf24' :
+      t.color.includes('slate') ? '#cbd5e1' : '#34d399'
+    ) : '#ffffff'
+    return {
+      ...stat,
+      dotColor
+    }
+  }).sort((a, b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts
+    if (b.gd !== a.gd) return b.gd - a.gd
+    return b.gf - a.gf
+  })
+})
 </script>
 
 <template>
@@ -154,6 +214,48 @@ function selectTeam(teamId) {
       </div>
     </section>
 
+    <!-- League Standings Section -->
+    <section class="section" style="padding-top: 0; padding-bottom: 2rem;">
+      <div class="container">
+        <div class="section-header" style="margin-bottom: 2rem;">
+          <h2 class="section-title">LEAGUE STANDINGS</h2>
+          <div class="section-divider"></div>
+        </div>
+        
+        <div style="max-width: 48rem; margin: 0 auto; background-color: #0a2d1d; border: 1px solid #27523d; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">Teams</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">PLD</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">GD</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">GF</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">PTS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="team in displayTeams" :key="team.name">
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600; display: flex; align-items: center; gap: 0.75rem; color: #FFFFFF;">
+                    <span style="width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0;" :style="{ backgroundColor: team.dotColor }"></span>
+                    {{ team.name }} FC
+                  </td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.played }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.gd }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.gf }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600; color: #D4AF37;">{{ team.pts }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top: 1.5rem; text-align: center;">
+            <router-link to="/schedule" class="outline-gold-button" style="padding: 0.75rem 1.5rem; font-size: 0.875rem;">
+              View Full Match Schedule
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- The 4 Teams Contenders Section -->
     <section id="teams" class="section teams-section">

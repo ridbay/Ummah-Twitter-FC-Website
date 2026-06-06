@@ -62,6 +62,10 @@ const displayTeams = computed(() => {
       color: config.color,
       dotColor: config.dotColor
     }
+  }).sort((a, b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts
+    if (b.gd !== a.gd) return b.gd - a.gd
+    return b.gf - a.gf
   })
 })
 
