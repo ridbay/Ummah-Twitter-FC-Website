@@ -388,6 +388,21 @@ async function downloadTicket() {
               />
             </div>
 
+            <div class="field">
+              <label for="role">Role <span class="req" aria-hidden="true">*</span></label>
+              <div class="select-wrap">
+                <select v-model="form.role" id="role" name="role" required>
+                  <option value="Fan">Fan</option>
+                  <option value="Player">Player</option>
+                </select>
+                <span class="chevron" aria-hidden="true">
+                  <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
             <div class="field last">
               <label for="supporting">Supporting Team <span class="req" aria-hidden="true">*</span></label>
               <div class="select-wrap">

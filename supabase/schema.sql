@@ -6,7 +6,7 @@ create table public.checkins (
   name        text        not null,
   twitter     text,
   email       text        not null,
-  role        text        not null check (role in ('Player', 'Fan')),
+  role        text        not null default 'Fan' check (role in ('Player', 'Fan')),
   supporting  text        not null default 'Neutral',
   arrived     boolean     not null default false,
   arrived_at  timestamptz,
