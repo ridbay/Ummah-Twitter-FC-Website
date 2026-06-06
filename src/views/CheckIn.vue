@@ -6,6 +6,7 @@ import { jsPDF } from 'jspdf'
 const form = reactive({ name: '', twitter: '', email: '', role: 'Fan', supporting: 'Neutral' })
 const state = ref('idle') // idle | loading | success | error
 const errorMsg = ref('')
+const isDuplicateEmail = ref(false)
 const successName = ref('')
 
 const ticketInfo = reactive({ name: '', role: '', ticketId: '', twitter: '', supporting: 'Neutral' })
@@ -29,11 +30,16 @@ async function handleSubmit() {
 
   if (error) {
     state.value = 'error'
-    errorMsg.value = error.code === '23505'
-      ? 'This email address is already registered.'
-      : 'Something went wrong. Please try again.'
+    if (error.code === '23505') {
+      errorMsg.value = 'This email address is already registered.'
+      isDuplicateEmail.value = true
+    } else {
+      errorMsg.value = 'Something went wrong. Please try again.'
+      isDuplicateEmail.value = false
+    }
     return
   }
+  isDuplicateEmail.value = false
 
   const insertedRow = data && data[0]
   const uniqueSuffix = insertedRow ? String(insertedRow.id).slice(-4).toUpperCase() : Math.floor(1000 + Math.random() * 9000)
@@ -51,6 +57,7 @@ async function handleSubmit() {
 function setError(msg) {
   errorMsg.value = msg
   state.value = 'error'
+  isDuplicateEmail.value = false
 }
 
 function loadLogo() {
@@ -411,13 +418,20 @@ async function downloadTicket() {
             </button>
 
             <Transition name="slide-down">
-              <div v-if="state === 'error'" class="error-msg" role="alert" aria-live="polite">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M7 4v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <circle cx="7" cy="10" r="0.75" fill="currentColor"/>
-                </svg>
-                {{ errorMsg }}
+              <div v-if="state === 'error'" class="error-msg" role="alert" aria-live="polite" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M7 4v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="7" cy="10" r="0.75" fill="currentColor"/>
+                  </svg>
+                  <span>{{ errorMsg }}</span>
+                </div>
+                <div v-if="isDuplicateEmail" style="margin-left: 22px; margin-top: 4px;">
+                  <router-link to="/certificate" style="color: var(--gold); text-decoration: underline;">
+                    Download your certificate or pass here.
+                  </router-link>
+                </div>
               </div>
             </Transition>
           </form>

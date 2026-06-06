@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { supabase } from '../lib/supabase.js'
 
 const pointsKey = [
   { label: 'WIN', points: 3, class: 'win' },
@@ -7,12 +8,62 @@ const pointsKey = [
   { label: 'LOSE', points: 1, class: 'lose' }
 ]
 
-const teams = [
-  { name: 'Abubakar', color: 'border-cyan-400 text-cyan-400 bg-cyan-950/40', dotColor: '#22d3ee' },
-  { name: 'Aliy', color: 'border-amber-400 text-amber-400 bg-amber-950/40', dotColor: '#fbbf24' },
-  { name: 'Umar', color: 'border-slate-300 text-slate-300 bg-slate-950/40', dotColor: '#cbd5e1' },
-  { name: 'Uthman', color: 'border-emerald-500 text-emerald-400 bg-emerald-950/40', dotColor: '#34d399' }
-]
+const teamsConfigs = {
+  Abubakar: { color: 'border-cyan-400 text-cyan-400 bg-cyan-950/40', dotColor: '#22d3ee' },
+  Aliy: { color: 'border-amber-400 text-amber-400 bg-amber-950/40', dotColor: '#fbbf24' },
+  Umar: { color: 'border-slate-300 text-slate-300 bg-slate-950/40', dotColor: '#cbd5e1' },
+  Uthman: { color: 'border-emerald-500 text-emerald-400 bg-emerald-950/40', dotColor: '#34d399' }
+}
+
+const teamStats = ref([])
+
+async function loadStats() {
+  const { data, error } = await supabase
+    .from('team_stats')
+    .select('*')
+    .order('pts', { ascending: false })
+    .order('gd', { ascending: false })
+    .order('gf', { ascending: false })
+    
+  if (!error && data) {
+    teamStats.value = data
+  }
+}
+
+let channel
+onMounted(() => {
+  loadStats()
+  channel = supabase
+    .channel('public:team_stats')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'team_stats' }, () => {
+      loadStats()
+    })
+    .subscribe()
+})
+
+onUnmounted(() => {
+  if (channel) channel.unsubscribe()
+})
+
+const displayTeams = computed(() => {
+  if (teamStats.value.length === 0) {
+    // Fallback if db is empty
+    return Object.keys(teamsConfigs).map(name => ({
+      name,
+      ...teamsConfigs[name],
+      played: '—', gd: '—', gf: '—', pts: '—'
+    }))
+  }
+  
+  return teamStats.value.map(stat => {
+    const config = teamsConfigs[stat.name] || { color: '', dotColor: '#ffffff' }
+    return {
+      ...stat,
+      color: config.color,
+      dotColor: config.dotColor
+    }
+  })
+})
 
 const schedule = [
   { home: 'Aliy', away: 'Uthman', homeColor: '#fbbf24', awayColor: '#34d399', fh: '20 mins', rest: '5 mins', sh: '20 mins', total: '45 mins' },
@@ -70,15 +121,15 @@ const schedule = [
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="team in teams" :key="team.name">
+                  <tr v-for="team in displayTeams" :key="team.name">
                     <td class="team-cell">
                       <span class="team-dot" :style="{ backgroundColor: team.dotColor }"></span>
                       {{ team.name }} FC
                     </td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td>—</td>
+                    <td>{{ team.played }}</td>
+                    <td>{{ team.gd }}</td>
+                    <td>{{ team.gf }}</td>
+                    <td>{{ team.pts }}</td>
                   </tr>
                 </tbody>
               </table>

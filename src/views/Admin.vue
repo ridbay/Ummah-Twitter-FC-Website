@@ -36,18 +36,61 @@ const registrations = ref([])
 const dataLoading   = ref(false)
 const lastRefreshed = ref(null)
 
+const currentTab = ref('checkins') // 'checkins' | 'teams'
+
+const teamStats = ref([])
+const teamStatsLoading = ref(false)
+
 async function loadData() {
   dataLoading.value = true
-  const { data, error } = await supabase
-    .from('checkins')
-    .select('*')
-    .order('created_at', { ascending: false })
+  
+  if (currentTab.value === 'checkins') {
+    const { data, error } = await supabase
+      .from('checkins')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  if (!error) {
-    registrations.value = data ?? []
-    lastRefreshed.value = new Date()
+    if (!error) {
+      registrations.value = data ?? []
+      lastRefreshed.value = new Date()
+    }
+  } else if (currentTab.value === 'teams') {
+    teamStatsLoading.value = true
+    const { data, error } = await supabase
+      .from('team_stats')
+      .select('*')
+      .order('pts', { ascending: false })
+      .order('gd', { ascending: false })
+      .order('gf', { ascending: false })
+      
+    if (!error) {
+      teamStats.value = data ?? []
+      lastRefreshed.value = new Date()
+    }
+    teamStatsLoading.value = false
   }
+  
   dataLoading.value = false
+}
+
+async function saveTeamStat(team) {
+  const { error } = await supabase
+    .from('team_stats')
+    .update({
+      played: team.played,
+      gd: team.gd,
+      gf: team.gf,
+      pts: team.pts,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', team.id)
+    
+  if (!error) {
+    // Optionally show a mini success toast, or just reload to re-sort
+    loadData()
+  } else {
+    alert('Failed to save team stats.')
+  }
 }
 
 async function toggleArrived(reg) {
@@ -108,6 +151,9 @@ function setupRealtime() {
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'checkins' }, ({ new: row }) => {
       const idx = registrations.value.findIndex(r => r.id === row.id)
       if (idx !== -1) registrations.value[idx] = { ...registrations.value[idx], ...row }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'team_stats' }, () => {
+      if (currentTab.value === 'teams') loadData()
     })
     .subscribe()
 }
@@ -213,7 +259,28 @@ onUnmounted(() => {
           </div>
         </header>
 
+        <!-- Tabs -->
+        <div class="tabs-container">
+          <button 
+            class="tab-btn" 
+            :class="{ active: currentTab === 'checkins' }"
+            @click="currentTab = 'checkins'; loadData()"
+          >
+            Check-Ins
+          </button>
+          <button 
+            class="tab-btn" 
+            :class="{ active: currentTab === 'teams' }"
+            @click="currentTab = 'teams'; loadData()"
+          >
+            League Standings
+          </button>
+        </div>
+
         <div class="content">
+
+          <!-- ── Check-Ins Tab ── -->
+          <template v-if="currentTab === 'checkins'">
 
           <!-- Stats -->
           <div class="stats-grid">
@@ -335,6 +402,58 @@ onUnmounted(() => {
               </div>
             </TransitionGroup>
           </div>
+          </template>
+
+          <!-- ── Teams Tab ── -->
+          <template v-if="currentTab === 'teams'">
+            <div class="results-info">
+              <span>Manage Team Standings</span>
+              <span v-if="lastRefreshed" class="last-updated">
+                Updated {{ formatTime(lastRefreshed.toISOString()) }}
+              </span>
+            </div>
+            
+            <div v-if="dataLoading && teamStats.length === 0" class="skeleton-list">
+              <div v-for="i in 4" :key="i" class="skeleton-card" style="height: 140px;"></div>
+            </div>
+            
+            <div v-else-if="!dataLoading && teamStats.length === 0" class="empty-state">
+              <p>No teams found. Ensure you ran the SQL script to insert the initial teams.</p>
+            </div>
+            
+            <div v-else class="reg-list">
+              <div v-for="team in teamStats" :key="team.id" class="reg-card">
+                <div class="reg-header" style="border-bottom: 1px solid var(--border-mid); padding-bottom: 10px; margin-bottom: 14px;">
+                  <span class="reg-name" style="font-size: 18px;">{{ team.name }} FC</span>
+                </div>
+                
+                <div class="stats-form-grid">
+                  <div class="stat-input-group">
+                    <label>PLD (Played)</label>
+                    <input type="number" v-model.number="team.played" min="0" />
+                  </div>
+                  <div class="stat-input-group">
+                    <label>GD (Goal Diff)</label>
+                    <input type="number" v-model.number="team.gd" />
+                  </div>
+                  <div class="stat-input-group">
+                    <label>GF (Goals For)</label>
+                    <input type="number" v-model.number="team.gf" min="0" />
+                  </div>
+                  <div class="stat-input-group">
+                    <label>PTS (Points)</label>
+                    <input type="number" v-model.number="team.pts" min="0" />
+                  </div>
+                </div>
+                
+                <div class="reg-footer" style="justify-content: flex-end; margin-top: 14px;">
+                  <button @click="saveTeamStat(team)" class="btn-arrive" style="background: rgba(232, 184, 75, 0.1); color: var(--gold); border-color: rgba(232, 184, 75, 0.3);">
+                    Save Stats
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
 
         </div>
       </div>
@@ -549,11 +668,82 @@ onUnmounted(() => {
 }
 
 /* Content */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 16px 20px 0;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
 .content {
   padding: 20px 16px 48px;
   max-width: 680px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* Team Stats Form */
+.stats-form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-input-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.stat-input-group input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border-mid);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.stat-input-group input:focus {
+  border-color: var(--gold);
 }
 
 /* Stats */
