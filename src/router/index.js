@@ -5,6 +5,7 @@ import CheckIn from '../views/CheckIn.vue'
 import Admin from '../views/Admin.vue'
 import QR from '../views/QR.vue'
 import Schedule from '../views/Schedule.vue'
+import Certificate from '../views/Certificate.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -15,5 +16,6 @@ export const router = createRouter({
     { path: '/admin', component: Admin },
     { path: '/qr', component: QR },
     { path: '/schedule', component: Schedule },
+    { path: '/certificate', component: Certificate },
   ],
 })
