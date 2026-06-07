@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 
 const imageIds = [
   '1urq3UruzcpQ1wAI2CiPGzLSx0rqi_r4K',
@@ -854,6 +854,16 @@ const imageIds = [
 
 const selectedImage = ref(null)
 const loadedImages = reactive({})
+const displayImages = ref([])
+
+onMounted(() => {
+  const shuffled = [...imageIds]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  displayImages.value = shuffled
+})
 
 function onImageLoad(id) {
   loadedImages[id] = true
@@ -885,7 +895,7 @@ function closeLightbox() {
     <main class="container gallery-main">
       <div class="gallery-grid">
         <div 
-          v-for="id in imageIds" 
+          v-for="id in displayImages" 
           :key="id" 
           class="gallery-item"
           @click="openLightbox(getImageUrl(id))"
@@ -919,7 +929,7 @@ function closeLightbox() {
       
       <div style="text-align: center; margin-top: 3rem;">
         <a href="https://drive.google.com/drive/folders/1KMVb7lrMoKbD7w0u86yI0bwiwEYwTcF-?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-external btn-pulse-gold">
-          🔥 Unlock 100+ Exclusive Match Photos and Videos!
+          🔥 Unlock 500+ Exclusive Match Photos and Videos!
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem; margin-left: 0.5rem;">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
             <polyline points="15 3 21 3 21 9"/>
