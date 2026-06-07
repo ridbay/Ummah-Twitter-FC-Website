@@ -348,193 +348,20 @@ async function downloadTicket() {
     <!-- Card -->
     <main>
       <div class="card">
-        <Transition name="fade" mode="out-in">
-
-          <!-- Form -->
-          <form v-if="state !== 'success'" key="form" @submit.prevent="handleSubmit" novalidate>
-            <p class="card-title">Event Check-In</p>
-
-            <div class="field">
-              <label for="name">What's your full name? <span class="req" aria-hidden="true">*</span></label>
-              <input
-                v-model="form.name"
-                type="text" id="name" name="name"
-                placeholder="Your full name"
-                required autocomplete="name" inputmode="text"
-              />
-            </div>
-
-            <div class="field">
-              <label for="twitter">Your Twitter / X Handle</label>
-              <div class="input-wrap">
-                <span class="prefix" aria-hidden="true">@</span>
-                <input
-                  v-model="form.twitter"
-                  type="text" id="twitter" name="twitter"
-                  placeholder="yourhandle"
-                  autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
-                  class="has-prefix"
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="email">Where should we send your pass? <span class="req" aria-hidden="true">*</span></label>
-              <input
-                v-model="form.email"
-                type="email" id="email" name="email"
-                placeholder="you@example.com"
-                required autocomplete="email" inputmode="email"
-              />
-            </div>
-
-            <div class="field">
-              <label for="role">Attending As <span class="req" aria-hidden="true">*</span></label>
-              <div class="select-wrap">
-                <select v-model="form.role" id="role" name="role" required>
-                  <option value="Fan">Fan</option>
-                  <option value="Player">Player</option>
-                </select>
-                <span class="chevron" aria-hidden="true">
-                  <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
-                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </div>
-            </div>
-
-            <div class="field last">
-              <label for="supporting">Who are you cheering for? <span class="req" aria-hidden="true">*</span></label>
-              <div class="select-wrap">
-                <select v-model="form.supporting" id="supporting" name="supporting" required>
-                  <option value="Neutral">Neutral</option>
-                  <option value="Aliy">Aliy</option>
-                  <option value="Abubakar">Abubakar</option>
-                  <option value="Umar">Umar</option>
-                  <option value="Uthman">Uthman</option>
-                </select>
-                <span class="chevron" aria-hidden="true">
-                  <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
-                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </div>
-            </div>
-
-            <button type="submit" class="btn-submit" :class="{ loading: state === 'loading' }" :disabled="state === 'loading'">
-              <span v-if="state !== 'loading'">Download certificate</span>
-              <span v-else class="btn-loading">
-                <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" opacity="0.25"/>
-                  <path d="M8 2a6 6 0 0 1 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Downloading…
-              </span>
-            </button>
-
-            <Transition name="slide-down">
-              <div v-if="state === 'error'" class="error-msg" role="alert" aria-live="polite" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M7 4v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    <circle cx="7" cy="10" r="0.75" fill="currentColor"/>
-                  </svg>
-                  <span>{{ errorMsg }}</span>
-                </div>
-                <div v-if="isDuplicateEmail" style="margin-left: 22px; margin-top: 4px;">
-                  <router-link to="/certificate" style="color: var(--gold); text-decoration: underline;">
-                    Download your certificate or pass here.
-                  </router-link>
-                </div>
-              </div>
-            </Transition>
-          </form>
-
-          <!-- Success -->
-          <div v-else key="success" class="success-state" aria-live="polite">
-            <div class="success-icon" aria-hidden="true">
-              <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                <path d="M6 15.5l7.5 7.5 10.5-13" stroke="#3dd68c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <div class="event-ended-state" style="text-align: center; padding: 2rem 0;">
+            <div class="success-icon" aria-hidden="true" style="background-color: rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.3); margin: 0 auto 1.5rem auto;">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
               </svg>
             </div>
-            <h2>You're registered!</h2>
-            <p>Welcome, <span class="success-name">{{ ticketInfo.name }}</span>.</p>
-            <p class="success-sub" style="margin-bottom: 24px;">Your spectator pass has been generated. Download it below and present it at the gate.</p>
-
-            <!-- CSS Ticket Pass -->
-            <div class="ticket-wrapper">
-              <div class="ticket-card">
-                <div class="ticket-main">
-                  <div class="ticket-logo-row" style="display: flex; align-items: center; gap: 0.5rem;">
-                    <img src="/logo.jpg" alt="Ummah Twitter FC Logo" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold);" />
-                    <span class="ticket-logo-text">UMMAH TWITTER FC PASS</span>
-                  </div>
-                  <h3 class="ticket-user-name">{{ ticketInfo.name }}</h3>
-                  <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                    <span class="ticket-role-badge" :class="ticketInfo.role.toLowerCase()">
-                      {{ ticketInfo.role }}
-                    </span>
-                    <span class="ticket-team-badge" :class="ticketInfo.supporting.toLowerCase()">
-                      Supporting: {{ ticketInfo.supporting }}
-                    </span>
-                    <span v-if="ticketInfo.twitter" class="ticket-twitter">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.85; flex-shrink: 0;">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                      </svg>
-                      {{ ticketInfo.twitter }}
-                    </span>
-                  </div>
-                  
-                  <div class="ticket-details-row">
-                    <div class="ticket-detail">
-                      <span class="detail-label">Date</span>
-                      <span class="detail-value">Saturday, June 6</span>
-                    </div>
-                    <div class="ticket-detail">
-                      <span class="detail-label">Venue</span>
-                      <span class="detail-value">Landmark College</span>
-                    </div>
-                    <div class="ticket-detail">
-                      <span class="detail-label">Time</span>
-                      <span class="detail-value">8:00 AM Prompt</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="ticket-stub">
-                  <div class="stub-divider"></div>
-                  <span class="stub-label">Ticket ID</span>
-                  <span class="stub-value">{{ ticketInfo.ticketId }}</span>
-                  <div class="stub-barcode" aria-hidden="true">
-                    <div class="barcode-line" style="width: 2px;"></div>
-                    <div class="barcode-line" style="width: 4px;"></div>
-                    <div class="barcode-line" style="width: 1px;"></div>
-                    <div class="barcode-line" style="width: 3px;"></div>
-                    <div class="barcode-line" style="width: 5px;"></div>
-                    <div class="barcode-line" style="width: 2px;"></div>
-                    <div class="barcode-line" style="width: 4px;"></div>
-                    <div class="barcode-line" style="width: 1px;"></div>
-                    <div class="barcode-line" style="width: 3px;"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Download button -->
-            <button @click="downloadTicket" class="btn-download-pass" style="margin-bottom: 0.75rem;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; display: inline-block; vertical-align: middle;">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" x2="12" y1="15" y2="3"/>
-              </svg>
-              Download Pass (PNG)
-            </button>
-
-
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: #FFFFFF; margin-bottom: 0.5rem;">The Match Has Concluded!</h2>
+            <p style="color: rgba(248, 250, 252, 0.8); line-height: 1.6; margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+              Check-ins for Ummah Twitter FC 2026 are now closed. Thank you to everyone who participated and made it a memorable event.
+            </p>
+            <router-link to="/certificate" class="btn-submit" style="text-decoration: none; display: inline-flex; justify-content: center; align-items: center; width: auto; padding: 0.875rem 1.5rem;">
+              Download Certificate of Participation
+            </router-link>
           </div>
-
-        </Transition>
       </div>
     </main>
 

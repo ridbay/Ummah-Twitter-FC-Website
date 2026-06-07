@@ -124,12 +124,9 @@ const displayTeams = computed(() => {
           <div class="hero-tag">
             <!-- Ticket Icon -->
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 0.875rem; height: 0.875rem;">
-              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
-              <path d="M13 5v2"/>
-              <path d="M13 17v2"/>
-              <path d="M13 11v2"/>
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
-            Free Spectator Entrance Pass Required
+            Event Successfully Concluded
           </div>
           
           <h1 class="hero-title">
@@ -138,12 +135,12 @@ const displayTeams = computed(() => {
           </h1>
           
           <p class="hero-text">
-            Uniting Muslims through the beautiful game. Spectators must register online to gain entry to the stadium. All registered attendees receive an official <strong style="color: #D4AF37;">Certificate of Participation</strong> by email after the tournament!
+            Uniting Muslims through the beautiful game. The tournament has concluded. All registered attendees can download their official <strong style="color: #D4AF37;">Certificate of Participation</strong> below!
           </p>
           
           <div class="hero-buttons">
-            <router-link to="/register" class="gold-button" style="padding: 0.875rem 2rem; font-size: 1rem;">
-              Register as Spectator
+            <router-link to="/certificate" class="gold-button" style="padding: 0.875rem 2rem; font-size: 1rem;">
+              Download Certificate
               <!-- Chevron Right Icon -->
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.25rem; height: 1.25rem;">
                 <path d="m9 18 6-6-6-6"/>
@@ -196,7 +193,7 @@ const displayTeams = computed(() => {
             </div>
           </a>
 
-          <router-link to="/register" class="info-card map-card">
+          <router-link to="/certificate" class="info-card map-card">
             <div class="info-icon-wrapper">
               <!-- Mail Icon -->
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;">
@@ -207,7 +204,7 @@ const displayTeams = computed(() => {
             <div>
               <p class="info-label">Attendee Gift ↗</p>
               <h4 class="info-title">Participant Certificate</h4>
-              <p class="info-desc">Claim your pass to receive it</p>
+              <p class="info-desc">Download your certificate now</p>
             </div>
           </router-link>
         </div>
