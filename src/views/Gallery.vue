@@ -1,22 +1,17 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 
-// Google Drive Image IDs extracted from the folder
-const imageIds = [
-  "6PSdkFYUx0suK1NZr2K0SmPPgaGe",
-  "EbMHvv4He0suK1NZr2K0RPEdyDqb",
-  "RQsiRZmWr0suK1NZr2K0W7ervatJ",
-  "Wk947wVTF0suK1NZr2K0SExP43hN",
-  "gU249iFkc0suK1NZr2K0PDkPf28y",
-  "hAi6ytsWq0suK1NZr2K0RuQ6URqY",
-  "sUy6oSGdZ0suK1NZr2K0YHRkZ8ZC"
-]
+const imageIds = ['1-Q70kD590ss-wpwLhpcD5oSBE__NvJVE', '1kVo_UDtCLkK5mPXg2-zFzifi7A7gPXVM', '1N3Y6j1l8JmBQ-aoizrOKmOoXy6z_G85q', '1HsqBA2bkLsGyPl9cE9YxzWXHQGf3a-FO', '1O8jiLypAeTbesvRkRS8-txhMrEKJdNgI', '12-XGRipgQvF-358mqPl6sRylFpkb8obS', '1yPvJ5MhSFSoWs8i6LWTkFwf0lDDMn2yO', '1jbQyr4JdWOAjuf9_LfX2VApdfqIURaRM', '1PZLqGm0O1DbUSyPGZi6UtsK7w1WeA7ic', '1NUyRSH9XYotGJfvkxax_3vU0k-6Vpss5', '1pTRxt7SM8LI3rVucMH5bHJIwu6hwgyWw', '13CV1y4kb8CYc3eM3QGNMdph4m1sHHH-q', '1L4GZUdwNvptSWabP9VVkQEpEnXDFs8ar', '1UNBsdReDzUnLbNLbowzA_Kycj-7yGwV5', '1qQ3fbGebEqKGabin71BnZjj8Rh5-yQN4', '1PHEqsh-L6kBBw6M8OawIQXy1QPlaowN3', '1JvgFGfvyjRVaIrRW7JxmKzpxZp2qWY9e', '1nNk0XqeswU9ooq_QZ_-sFr-wdaDhEAVs', '1U9Mpxnd_Hs8QO8NTzzNebl04HN-TlEox', '1wPL77G4hyi4qRtT8JMWHNlAgKk8idpWa', '1Pi6Op458sXwO2zx2XbeN7YoOu7aD7g1E', '1G3LkNtcjY1Sq7OolHaT5nmoWTEZZvdw7', '1EAk9wSsrDRECsJ95Pa9lPw82XHaBEPqm', '1AsQrZXU3cuQdw3Kj9cJrvzE5yc872QyN', '1XVw8FXpLesW9rSGKM575nrBVUIcPjty3', '1JDTqCtWY5mFqSoJqj9uM88ETWatgWhMN', '1urq3UruzcpQ1wAI2CiPGzLSx0rqi_r4K', '16AwKMCE3ZOve7qYBJthuMSv3Q1Tsw-Np', '1ltmKKhuaHLvk-pYwwoH6gkZqiGTXdBMl', '1KzmCO-zB-R3l5bWQ5icxnhlrNqvpPea3', '1mpsvzPMxhT6_hnMYPEnIa0vEjdyG1Raz', '1f7ZNBHtXE22TE6uWR2NNvJiN3rOqWXpC', '110mR1P5VtuRLM_poiE9-Syioo1jDubZS', '1utMeVIfIxAgbE2iYRpFi4sjs8q9flSj6', '1UomhsvdqGFSnJpYk3AkLiIQsKEfOqjP7', '1vsu6S14NPiCDUw6IghJDv58sEAneAa2q', '1MMHMnjoP9zUWeSJFdr_0L8dEVmzmRP0h', '1GPj-UOi_Qyyyw65xYlEGslKDg5YcRBTQ', '168bJWc4qvNh2M1ftf3BHMjz7tOtnHfDv', '1GBbBIgSV4A_SAC4oRWcO6mbJRkhEXtKy', '1VmfuHoAb9qM9MPYvkske3mjRhIV0X8Lf', '1OAe0GgRspsJpEqA07dTRMS7n8ZTSX039', '1UHxxozR3Mapszgl25czFUeEunDEQrC9i', '1BdfXm5atXScO9KHQSDRiZdHiK8Jt_Mr-', '1MiV8bnXr75run_SbBpflB2hXVcB_426F', '19fMQ5meYjriCfSnqIdpu3xoSVp-bXBf1', '1UkJs7LAUbX5gNzKIYImEi4vLAyZjkd7D', '1th_WGFVNAfNaxJeiU5ZbTAIadE8SMXcb', '1sFO3ew-qhPXbLGrYGDdNfNvGKqug5tH2', '1pmrt2SeRcoi18cZ8wfgf2GiDIWlkHAbA']
 
 const selectedImage = ref(null)
+const loadedImages = reactive({})
+
+function onImageLoad(id) {
+  loadedImages[id] = true
+}
 
 function getImageUrl(id) {
-  // Using uc?export=view to fetch the raw image directly
-  return `https://drive.google.com/uc?export=view&id=${id}`
+  return `https://lh3.googleusercontent.com/d/${id}`
 }
 
 function openLightbox(url) {
@@ -45,7 +40,22 @@ function closeLightbox() {
           class="gallery-item"
           @click="openLightbox(getImageUrl(id))"
         >
-          <img :src="getImageUrl(id)" loading="lazy" alt="Event moment" class="gallery-img" />
+          <!-- Loader overlay -->
+          <div v-if="!loadedImages[id]" class="image-loader">
+            <svg class="spinner" width="32" height="32" viewBox="0 0 16 16" fill="none" style="animation: spin 1s linear infinite; color: #D4AF37;">
+              <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" opacity="0.25"/>
+              <path d="M8 2a6 6 0 0 1 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <img 
+            :src="getImageUrl(id)" 
+            loading="lazy" 
+            alt="Event moment" 
+            class="gallery-img" 
+            @load="onImageLoad(id)"
+            :style="{ opacity: loadedImages[id] ? 1 : 0 }"
+          />
           <div class="overlay">
             <svg class="zoom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"/>
@@ -182,6 +192,15 @@ function closeLightbox() {
   transform: scale(1);
 }
 
+.image-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(39, 82, 61, 0.1);
+}
+
 .btn-external {
   display: inline-flex;
   align-items: center;
@@ -256,5 +275,10 @@ function closeLightbox() {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>
