@@ -68,8 +68,8 @@ function closeLightbox() {
       </div>
       
       <div style="text-align: center; margin-top: 3rem;">
-        <a href="https://drive.google.com/drive/folders/1KMVb7lrMoKbD7w0u86yI0bwiwEYwTcF-?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-external">
-          View all in Google Drive
+        <a href="https://drive.google.com/drive/folders/1KMVb7lrMoKbD7w0u86yI0bwiwEYwTcF-?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-external btn-pulse-gold">
+          🔥 Unlock 100+ Exclusive Match Photos and Videos!
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem; margin-left: 0.5rem;">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
             <polyline points="15 3 21 3 21 9"/>
@@ -205,18 +205,34 @@ function closeLightbox() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #27523d;
-  color: #FFFFFF;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #D4AF37 0%, #b8901b 100%);
+  color: #052014;
+  padding: 1rem 2rem;
+  border-radius: 50px;
   text-decoration: none;
-  font-weight: 600;
-  transition: background-color 0.2s, color 0.2s;
+  font-weight: 800;
+  font-size: 1.125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  transition: all 0.3s ease;
 }
 
 .btn-external:hover {
-  background-color: #D4AF37;
-  color: #052014;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6);
+  background: linear-gradient(135deg, #e6c55c 0%, #D4AF37 100%);
+  color: #000000;
+}
+
+.btn-pulse-gold {
+  animation: pulse-gold 2s infinite;
+}
+
+@keyframes pulse-gold {
+  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
 }
 
 /* Lightbox styles */
