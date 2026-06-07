@@ -28,6 +28,7 @@ async function loadMatches() {
     .order('created_at', { ascending: false })
     
   if (!error && data) {
+    console.log({data})
     matches.value = data
   }
   loading.value = false
@@ -62,7 +63,7 @@ const displayTeams = computed(() => {
 })
 
 const recentMatches = computed(() => {
-  return matches.value.filter(m => m.is_played).slice(0, 5)
+  return matches.value.filter(m => m.is_played).slice(0, 6)
 })
 
 const tableCardRef = ref(null)
