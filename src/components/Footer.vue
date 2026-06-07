@@ -23,7 +23,6 @@
             <li><router-link to="/about" class="footer-nav-link">About</router-link></li>
             <li><router-link to="/#teams" class="footer-nav-link">The Teams</router-link></li>
             <li><router-link to="/standings" class="footer-nav-link">League Standings</router-link></li>
-            <li><router-link to="/schedule" class="footer-nav-link">Game Schedule</router-link></li>
             <li><router-link to="/gallery" class="footer-nav-link">Gallery</router-link></li>
             <li><router-link to="/certificate" class="footer-nav-link">Download Certificate</router-link></li>
             <li><router-link to="/#rules" class="footer-nav-link">Format &amp; Scoring</router-link></li>

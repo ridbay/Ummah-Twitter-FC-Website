@@ -28,14 +28,9 @@ function closeMobileMenu() {
       <div class="nav-links">
         <router-link to="/" class="nav-link-a">Home</router-link>
         <router-link to="/about" class="nav-link-a">About</router-link>
-        <router-link to="/schedule" class="nav-link-a">Schedule</router-link>
         <router-link to="/standings" class="nav-link-a">Standings</router-link>
         <router-link to="/gallery" class="nav-link-a">Gallery</router-link>
         <router-link to="/certificate" class="nav-link-a">Download Certificate</router-link>
-        <router-link to="/qr" class="nav-link-a">QR Code</router-link>
-        <a href="https://www.google.com/maps/place/Landmark+College,+Ikorodu/data=!4m2!3m1!1s0x0:0x5f683c00ec0c6aeb?sa=X&ved=1t:2428&ictx=111" target="_blank" rel="noopener noreferrer" class="nav-link-a">
-          Directions ↗
-        </a>
       </div>
 
       <!-- Action Button (Desktop Only) -->
@@ -64,14 +59,9 @@ function closeMobileMenu() {
       <div v-if="isMobileMenuOpen" class="mobile-menu">
         <router-link to="/" class="mobile-menu-item" @click="closeMobileMenu">Home</router-link>
         <router-link to="/about" class="mobile-menu-item" @click="closeMobileMenu">About</router-link>
-        <router-link to="/schedule" class="mobile-menu-item" @click="closeMobileMenu">Game Schedule</router-link>
         <router-link to="/standings" class="mobile-menu-item" @click="closeMobileMenu">League Standings</router-link>
         <router-link to="/gallery" class="mobile-menu-item" @click="closeMobileMenu">Gallery</router-link>
         <router-link to="/certificate" class="mobile-menu-item" @click="closeMobileMenu">Download Certificate</router-link>
-        <router-link to="/qr" class="mobile-menu-item" @click="closeMobileMenu">Event QR Code</router-link>
-        <a href="https://www.google.com/maps/place/Landmark+College,+Ikorodu/data=!4m2!3m1!1s0x0:0x5f683c00ec0c6aeb?sa=X&ved=1t:2428&ictx=111" target="_blank" rel="noopener noreferrer" class="mobile-menu-item" @click="closeMobileMenu">
-          Directions ↗
-        </a>
         <div style="padding: 1.5rem 1rem;">
           <router-link to="/certificate" class="gold-button" style="width: 100%; padding: 0.875rem;" @click="closeMobileMenu">
             Download Certificate
