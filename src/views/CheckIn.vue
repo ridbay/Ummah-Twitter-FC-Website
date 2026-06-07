@@ -422,13 +422,13 @@ async function downloadTicket() {
             </div>
 
             <button type="submit" class="btn-submit" :class="{ loading: state === 'loading' }" :disabled="state === 'loading'">
-              <span v-if="state !== 'loading'">Check In</span>
+              <span v-if="state !== 'loading'">Download certificate</span>
               <span v-else class="btn-loading">
                 <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" opacity="0.25"/>
                   <path d="M8 2a6 6 0 0 1 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                Checking in…
+                Downloading…
               </span>
             </button>
 
