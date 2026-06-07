@@ -179,19 +179,31 @@ const recentMatches = computed(() => {
 }
 
 .standings-header {
-  padding: 4rem 1.5rem;
+  padding: 3rem 1rem;
   text-align: center;
   border-bottom: 1px solid #27523d;
   background: linear-gradient(to bottom, rgba(39, 82, 61, 0.1), transparent);
 }
 
+@media (min-width: 768px) {
+  .standings-header {
+    padding: 4rem 1.5rem;
+  }
+}
+
 .standings-title {
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 900;
   margin-bottom: 1rem;
   color: #FFFFFF;
   text-transform: uppercase;
   letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .standings-title {
+    font-size: 3rem;
+  }
 }
 
 .standings-subtitle {
@@ -202,8 +214,14 @@ const recentMatches = computed(() => {
 }
 
 .standings-main {
-  padding: 3rem 1.5rem 5rem;
+  padding: 2rem 1rem 4rem;
   flex: 1;
+}
+
+@media (min-width: 768px) {
+  .standings-main {
+    padding: 3rem 1.5rem 5rem;
+  }
 }
 
 .standings-content {
@@ -224,8 +242,14 @@ const recentMatches = computed(() => {
   background-color: #0a2d1d;
   border: 1px solid #27523d;
   border-radius: 16px;
-  padding: 2rem;
+  padding: 1rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 768px) {
+  .table-card, .sidebar-card {
+    padding: 2rem;
+  }
 }
 
 .table-wrapper {
@@ -240,13 +264,20 @@ const recentMatches = computed(() => {
 }
 
 .standings-table th {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
   color: rgba(248, 250, 252, 0.6);
-  padding: 1rem;
+  padding: 0.75rem 0.5rem;
   border-bottom: 2px solid rgba(39, 82, 61, 0.8);
+}
+
+@media (min-width: 768px) {
+  .standings-table th {
+    font-size: 0.875rem;
+    padding: 1rem;
+  }
 }
 
 .standings-table th:nth-child(2),
@@ -255,10 +286,17 @@ const recentMatches = computed(() => {
 }
 
 .standings-table td {
-  padding: 1.25rem 1rem;
+  padding: 1rem 0.5rem;
   border-bottom: 1px solid rgba(39, 82, 61, 0.4);
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+  .standings-table td {
+    padding: 1.25rem 1rem;
+    font-size: 1.125rem;
+  }
 }
 
 .team-col {
@@ -284,8 +322,14 @@ const recentMatches = computed(() => {
 .pts-col {
   color: #D4AF37;
   font-weight: 800 !important;
-  font-size: 1.25rem !important;
+  font-size: 1.125rem !important;
   background: rgba(212, 175, 55, 0.05);
+}
+
+@media (min-width: 768px) {
+  .pts-col {
+    font-size: 1.25rem !important;
+  }
 }
 
 .first-place td {
