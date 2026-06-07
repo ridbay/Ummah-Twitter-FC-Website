@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { supabase } from '../lib/supabase.js'
 import { calculateStandings } from '../lib/standings.js'
+import html2canvas from 'html2canvas'
 
 const teams = [
   { name: "Umar", color: "#cbd5e1" },
@@ -63,6 +64,44 @@ const displayTeams = computed(() => {
 const recentMatches = computed(() => {
   return matches.value.filter(m => m.is_played).slice(0, 5)
 })
+
+const tableCardRef = ref(null)
+const recentCardRef = ref(null)
+const scorersCardRef = ref(null)
+const downloading = ref(false)
+
+async function downloadForIG(elementRef, filename) {
+  if (!elementRef || downloading.value) return
+  
+  downloading.value = true
+  const el = elementRef
+  
+  // Temporarily add export class
+  el.classList.add('ig-export-mode')
+  
+  try {
+    // Small delay to ensure styles apply
+    await new Promise(r => setTimeout(r, 100))
+    
+    const canvas = await html2canvas(el, {
+      backgroundColor: '#052014',
+      scale: 2, // High res for IG
+      useCORS: true,
+      logging: false
+    })
+    
+    const link = document.createElement('a')
+    link.download = `${filename}.png`
+    link.href = canvas.toDataURL('image/png')
+    link.click()
+  } catch (err) {
+    console.error('Failed to capture image', err)
+    alert('Failed to capture image.')
+  } finally {
+    el.classList.remove('ig-export-mode')
+    downloading.value = false
+  }
+}
 </script>
 
 <template>
@@ -84,7 +123,19 @@ const recentMatches = computed(() => {
 
       <div v-else class="standings-content">
         <!-- Table Section -->
-        <div class="table-card">
+        <div class="table-card" ref="tableCardRef">
+          <div class="ig-watermark">
+            <div class="ig-logo">UMMAH TWITTER FC 2026</div>
+            <div class="ig-title">LEAGUE STANDINGS</div>
+          </div>
+          
+          <div class="card-header-flex">
+            <h3 class="sr-only">League Standings</h3>
+            <button @click="downloadForIG(tableCardRef, 'Ummah_FC_Standings')" class="btn-download" :disabled="downloading">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              IG Post
+            </button>
+          </div>
           <div class="table-wrapper">
             <table class="standings-table">
               <thead>
@@ -125,12 +176,23 @@ const recentMatches = computed(() => {
             <div class="legend-item"><span class="dot draw"></span> 2 PTS (Draw)</div>
             <div class="legend-item"><span class="dot loss"></span> 1 PT (Loss)</div>
           </div>
+          <div class="ig-footer">@MuslimUmmahFC</div>
         </div>
 
         <!-- Recent Matches Sidebar -->
         <div class="sidebar">
-          <div class="sidebar-card">
-            <h3>Recent Results</h3>
+          <div class="sidebar-card" ref="recentCardRef">
+            <div class="ig-watermark">
+              <div class="ig-logo">UMMAH TWITTER FC 2026</div>
+              <div class="ig-title">RECENT RESULTS</div>
+            </div>
+            
+            <div class="card-header-flex">
+              <h3>Recent Results</h3>
+              <button @click="downloadForIG(recentCardRef, 'Ummah_FC_Results')" class="btn-download" :disabled="downloading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+            </div>
             <div v-if="recentMatches.length === 0" class="empty-state">
               No matches played yet.
             </div>
@@ -145,10 +207,21 @@ const recentMatches = computed(() => {
                 <div class="match-team text-left" :class="{ 'font-bold text-gold': match.score2 > match.score1 }">{{ match.team2 }}</div>
               </div>
             </div>
+            <div class="ig-footer">@MuslimUmmahFC</div>
           </div>
           <!-- Top Scorers Sidebar -->
-          <div class="sidebar-card" style="margin-top: 2rem;">
-            <h3>Top Goal Scorers</h3>
+          <div class="sidebar-card" style="margin-top: 2rem;" ref="scorersCardRef">
+            <div class="ig-watermark">
+              <div class="ig-logo">UMMAH TWITTER FC 2026</div>
+              <div class="ig-title">TOP GOAL SCORERS</div>
+            </div>
+            
+            <div class="card-header-flex">
+              <h3>Top Goal Scorers</h3>
+              <button @click="downloadForIG(scorersCardRef, 'Ummah_FC_Scorers')" class="btn-download" :disabled="downloading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+            </div>
             <div class="match-list">
               <div v-for="(scorer, idx) in topScorers" :key="idx" class="scorer-row">
                 <div class="scorer-info">
@@ -161,6 +234,7 @@ const recentMatches = computed(() => {
                 </div>
               </div>
             </div>
+            <div class="ig-footer">@MuslimUmmahFC</div>
           </div>
         </div>
       </div>
@@ -478,5 +552,136 @@ const recentMatches = computed(() => {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* Download Button Styles */
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(39, 82, 61, 0.4);
+  padding-bottom: 1rem;
+}
+
+.card-header-flex h3 {
+  font-size: 1.5rem;
+  color: #FFFFFF;
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.btn-download {
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #D4AF37;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-download svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-download:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Instagram Export Mode Styles */
+.ig-watermark {
+  display: none;
+}
+.ig-footer {
+  display: none;
+}
+
+.ig-export-mode {
+  padding: 3rem !important;
+  background: linear-gradient(135deg, #052014 0%, #0a2d1d 100%) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  position: relative;
+  /* Make sure it scales nicely, we enforce a semi-square aspect ratio if possible, 
+     but html2canvas captures whatever the layout is. The padding helps. */
+}
+
+.ig-export-mode .btn-download {
+  display: none !important;
+}
+
+.ig-export-mode .card-header-flex {
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.ig-export-mode .card-header-flex h3 {
+  display: none !important; /* Hide original titles in export, rely on watermark */
+}
+
+.ig-export-mode .ig-watermark {
+  display: block;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.ig-export-mode .ig-logo {
+  color: #D4AF37;
+  font-weight: 900;
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.ig-export-mode .ig-title {
+  color: #FFFFFF;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.ig-export-mode .ig-footer {
+  display: block;
+  text-align: center;
+  margin-top: 3rem;
+  color: rgba(248, 250, 252, 0.6);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.ig-export-mode .standings-table td, 
+.ig-export-mode .standings-table th {
+  padding: 1.5rem 1rem !important;
+  font-size: 1.25rem !important;
 }
 </style>
