@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 
 const imageIds = [
   '1urq3UruzcpQ1wAI2CiPGzLSx0rqi_r4K',
@@ -852,11 +852,21 @@ const imageIds = [
   'https://lh3.googleusercontent.com/pw/AP1GczOoEGYW-hxKbz1f19QPm8dw0FLMha_AnN9vorhzmjgO3G2Xq34e_2CQTgDq1kNOuyLhNsQZDGUrx7c9RbhyQPYb6SZN6FTh3zbAgz5D_vJ3JfsckOs'
 ]
 
-const selectedImage = ref(null)
+const selectedIndex = ref(null)
 const loadedImages = reactive({})
 const displayImages = ref([])
+const isPlaying = ref(false)
+let playInterval = null
+
+function handleKeydown(e) {
+  if (selectedIndex.value === null) return
+  if (e.key === 'ArrowRight') nextImage()
+  if (e.key === 'ArrowLeft') prevImage()
+  if (e.key === 'Escape') closeLightbox()
+}
 
 onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
   const shuffled = [...imageIds]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -865,21 +875,68 @@ onMounted(() => {
   displayImages.value = shuffled
 })
 
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+  if (playInterval) clearInterval(playInterval)
+})
+
 function onImageLoad(id) {
   loadedImages[id] = true
 }
 
 function getImageUrl(id) {
   if (id.startsWith('http')) return `${id}=w1200`;
-  return `https://lh3.googleusercontent.com/d/${id}`;
+  return `https://lh3.googleusercontent.com/d/${id}`
 }
 
-function openLightbox(url) {
-  selectedImage.value = url
+function openLightbox(index) {
+  selectedIndex.value = index
 }
 
 function closeLightbox() {
-  selectedImage.value = null
+  selectedIndex.value = null
+  if (isPlaying.value) togglePlay()
+}
+
+function nextImage() {
+  if (selectedIndex.value !== null) {
+    selectedIndex.value = (selectedIndex.value + 1) % displayImages.value.length
+  }
+}
+
+function prevImage() {
+  if (selectedIndex.value !== null) {
+    selectedIndex.value = (selectedIndex.value - 1 + displayImages.value.length) % displayImages.value.length
+  }
+}
+
+function togglePlay() {
+  if (isPlaying.value) {
+    clearInterval(playInterval)
+    isPlaying.value = false
+  } else {
+    isPlaying.value = true
+    playInterval = setInterval(() => {
+      nextImage()
+    }, 3000)
+  }
+}
+
+let touchStartX = 0
+let touchEndX = 0
+
+function handleTouchStart(e) {
+  touchStartX = e.changedTouches[0].screenX
+}
+
+function handleTouchEnd(e) {
+  touchEndX = e.changedTouches[0].screenX
+  handleSwipe()
+}
+
+function handleSwipe() {
+  if (touchEndX < touchStartX - 50) nextImage()
+  if (touchEndX > touchStartX + 50) prevImage()
 }
 </script>
 
@@ -895,10 +952,10 @@ function closeLightbox() {
     <main class="container gallery-main">
       <div class="gallery-grid">
         <div 
-          v-for="id in displayImages" 
+          v-for="(id, index) in displayImages" 
           :key="id" 
           class="gallery-item"
-          @click="openLightbox(getImageUrl(id))"
+          @click="openLightbox(index)"
         >
           <!-- Loader overlay -->
           <div v-if="!loadedImages[id]" class="image-loader">
@@ -941,14 +998,47 @@ function closeLightbox() {
 
     <!-- Lightbox Modal -->
     <transition name="fade">
-      <div v-if="selectedImage" class="lightbox" @click="closeLightbox">
+      <div 
+        v-if="selectedIndex !== null" 
+        class="lightbox" 
+        @click.self="closeLightbox"
+        @touchstart="handleTouchStart"
+        @touchend="handleTouchEnd"
+      >
         <button class="lightbox-close" @click="closeLightbox" aria-label="Close image">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
-        <img :src="selectedImage" alt="Expanded event moment" class="lightbox-img" @click.stop />
+
+        <button class="lightbox-nav lightbox-prev" @click.stop="prevImage" aria-label="Previous image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        
+        <img 
+          :src="getImageUrl(displayImages[selectedIndex])" 
+          alt="Expanded event moment" 
+          class="lightbox-img" 
+          @click.stop 
+        />
+
+        <button class="lightbox-nav lightbox-next" @click.stop="nextImage" aria-label="Next image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+
+        <!-- Slideshow controls -->
+        <div class="lightbox-controls" @click.stop>
+          <button class="btn-play" @click="togglePlay" :title="isPlaying ? 'Pause' : 'Autoplay'">
+            <svg v-if="!isPlaying" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <span class="slide-counter">{{ selectedIndex + 1 }} / {{ displayImages.length }}</span>
+        </div>
       </div>
     </transition>
   </div>
@@ -1141,6 +1231,88 @@ function closeLightbox() {
 .lightbox-close svg {
   width: 24px;
   height: 24px;
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 10000;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-prev {
+  left: 2rem;
+}
+
+.lightbox-next {
+  right: 2rem;
+}
+
+.lightbox-controls {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  z-index: 10000;
+  backdrop-filter: blur(8px);
+}
+
+.btn-play {
+  background: none;
+  border: none;
+  color: #D4AF37;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.btn-play:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.btn-play svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.slide-counter {
+  color: #fff;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+  .lightbox-prev, .lightbox-next {
+    display: none; /* Hide arrows on mobile, rely on swipe */
+  }
 }
 
 .fade-enter-active,
