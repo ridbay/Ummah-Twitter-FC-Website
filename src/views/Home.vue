@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { supabase } from '../lib/supabase.js'
 import TwitterFeed from '../components/TwitterFeed.vue'
+import { calculateStandings } from '../lib/standings.js'
 
 const selectedTeam = ref(null)
 
@@ -48,28 +49,25 @@ function selectTeam(teamId) {
   selectedTeam.value = selectedTeam.value === teamId ? null : teamId
 }
 
-const teamStats = ref([])
+const matches = ref([])
 
-async function loadStats() {
+async function loadMatches() {
   const { data, error } = await supabase
-    .from('team_stats')
+    .from('matches')
     .select('*')
-    .order('pts', { ascending: false })
-    .order('gd', { ascending: false })
-    .order('gf', { ascending: false })
     
   if (!error && data) {
-    teamStats.value = data
+    matches.value = data
   }
 }
 
 let channel
 onMounted(() => {
-  loadStats()
+  loadMatches()
   channel = supabase
-    .channel('public:team_stats_home')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'team_stats' }, () => {
-      loadStats()
+    .channel('public:matches_home')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => {
+      loadMatches()
     })
     .subscribe()
 })
@@ -79,17 +77,10 @@ onUnmounted(() => {
 })
 
 const displayTeams = computed(() => {
-  if (teamStats.value.length === 0) {
-    return teams.map(t => ({
-      name: t.name,
-      dotColor: t.color.includes('cyan') ? '#22d3ee' :
-                t.color.includes('amber') ? '#fbbf24' :
-                t.color.includes('slate') ? '#cbd5e1' : '#34d399',
-      played: '—', gd: '—', gf: '—', pts: '—'
-    }))
-  }
+  const teamNames = teams.map(t => t.name)
+  const standings = calculateStandings(matches.value, teamNames)
   
-  return teamStats.value.map(stat => {
+  return standings.map(stat => {
     const t = teams.find(x => x.name === stat.name)
     const dotColor = t ? (
       t.color.includes('cyan') ? '#22d3ee' :
@@ -100,10 +91,6 @@ const displayTeams = computed(() => {
       ...stat,
       dotColor
     }
-  }).sort((a, b) => {
-    if (b.pts !== a.pts) return b.pts - a.pts
-    if (b.gd !== a.gd) return b.gd - a.gd
-    return b.gf - a.gf
   })
 })
 </script>
@@ -225,9 +212,13 @@ const displayTeams = computed(() => {
               <thead>
                 <tr>
                   <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">Teams</th>
-                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">PLD</th>
-                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">GD</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">P</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">W</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">D</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">L</th>
                   <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">GF</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">GA</th>
+                  <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">GD</th>
                   <th style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: rgba(248, 250, 252, 0.6); padding-bottom: 1rem;">PTS</th>
                 </tr>
               </thead>
@@ -237,17 +228,21 @@ const displayTeams = computed(() => {
                     <span style="width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0;" :style="{ backgroundColor: team.dotColor }"></span>
                     {{ team.name }} FC
                   </td>
-                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.played }}</td>
-                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.gd }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.p }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.w }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.d }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.l }}</td>
                   <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.gf }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.ga }}</td>
+                  <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600;">{{ team.gd }}</td>
                   <td style="padding: 1rem 0; border-top: 1px solid rgba(39, 82, 61, 0.4); font-weight: 600; color: #D4AF37;">{{ team.pts }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div style="margin-top: 1.5rem; text-align: center;">
-            <router-link to="/schedule" class="outline-gold-button" style="padding: 0.75rem 1.5rem; font-size: 0.875rem;">
-              View Full Match Schedule
+            <router-link to="/standings" class="outline-gold-button" style="padding: 0.75rem 1.5rem; font-size: 0.875rem;">
+              View Full League Standings
             </router-link>
           </div>
         </div>

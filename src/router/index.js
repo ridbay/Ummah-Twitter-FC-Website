@@ -6,6 +6,8 @@ import Admin from '../views/Admin.vue'
 import QR from '../views/QR.vue'
 import Schedule from '../views/Schedule.vue'
 import Certificate from '../views/Certificate.vue'
+import Gallery from '../views/Gallery.vue'
+import Standings from '../views/Standings.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -17,5 +19,7 @@ export const router = createRouter({
     { path: '/qr', component: QR },
     { path: '/schedule', component: Schedule },
     { path: '/certificate', component: Certificate },
+    { path: '/gallery', component: Gallery },
+    { path: '/standings', component: Standings },
   ],
 })

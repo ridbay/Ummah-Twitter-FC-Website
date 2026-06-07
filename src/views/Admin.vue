@@ -38,7 +38,8 @@ const lastRefreshed = ref(null)
 
 const currentTab = ref('checkins') // 'checkins' | 'teams'
 
-const teamStats = ref([])
+const teams = ref([])
+const matches = ref([])
 const teamStatsLoading = ref(false)
 
 async function loadData() {
@@ -56,42 +57,53 @@ async function loadData() {
     }
   } else if (currentTab.value === 'teams') {
     teamStatsLoading.value = true
-    const { data, error } = await supabase
-      .from('team_stats')
-      .select('*')
-      .order('pts', { ascending: false })
-      .order('gd', { ascending: false })
-      .order('gf', { ascending: false })
-      
-    if (!error) {
-      teamStats.value = data ?? []
-      lastRefreshed.value = new Date()
-    }
+    const { data: teamsData } = await supabase.from('team_stats').select('name').order('name')
+    const { data: matchesData } = await supabase.from('matches').select('*').order('created_at', { ascending: false })
+    
+    if (teamsData) teams.value = teamsData.map(t => t.name)
+    if (matchesData) matches.value = matchesData
+    
+    lastRefreshed.value = new Date()
     teamStatsLoading.value = false
   }
   
   dataLoading.value = false
 }
 
-async function saveTeamStat(team) {
+async function addMatch() {
   const { error } = await supabase
-    .from('team_stats')
+    .from('matches')
+    .insert([{ team1: teams.value[0], team2: teams.value[1], score1: 0, score2: 0, is_played: false }])
+  if (!error) loadData()
+}
+
+async function saveMatch(match) {
+  const { error } = await supabase
+    .from('matches')
     .update({
-      played: team.played,
-      gd: team.gd,
-      gf: team.gf,
-      pts: team.pts,
-      updated_at: new Date().toISOString()
+      team1: match.team1,
+      team2: match.team2,
+      score1: match.score1,
+      score2: match.score2,
+      is_played: match.is_played
     })
-    .eq('id', team.id)
+    .eq('id', match.id)
     
   if (!error) {
-    // Optionally show a mini success toast, or just reload to re-sort
     loadData()
   } else {
-    alert('Failed to save team stats.')
+    alert('Failed to save match.')
   }
 }
+
+async function deleteMatch(id) {
+  if (!confirm('Delete this match?')) return
+  const { error } = await supabase.from('matches').delete().eq('id', id)
+  if (!error) loadData()
+}
+
+// Standings computed from matches not needed here since we only manage matches. 
+// But we could show them if we import the helper. We'll just manage matches here.
 
 async function toggleArrived(reg) {
   const next = !reg.arrived
@@ -152,7 +164,7 @@ function setupRealtime() {
       const idx = registrations.value.findIndex(r => r.id === row.id)
       if (idx !== -1) registrations.value[idx] = { ...registrations.value[idx], ...row }
     })
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'team_stats' }, () => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => {
       if (currentTab.value === 'teams') loadData()
     })
     .subscribe()
@@ -273,7 +285,7 @@ onUnmounted(() => {
             :class="{ active: currentTab === 'teams' }"
             @click="currentTab = 'teams'; loadData()"
           >
-            League Standings
+            Matches
           </button>
         </div>
 
@@ -406,49 +418,61 @@ onUnmounted(() => {
 
           <!-- ── Teams Tab ── -->
           <template v-if="currentTab === 'teams'">
-            <div class="results-info">
-              <span>Manage Team Standings</span>
-              <span v-if="lastRefreshed" class="last-updated">
-                Updated {{ formatTime(lastRefreshed.toISOString()) }}
-              </span>
+            <div class="results-info" style="justify-content: space-between;">
+              <span>Manage Matches</span>
+              <button @click="addMatch" class="btn-arrive" style="background: var(--gold); color: #000; font-weight: bold; border-radius: 4px; padding: 4px 12px; height: auto;">
+                + Add Match
+              </button>
             </div>
             
-            <div v-if="dataLoading && teamStats.length === 0" class="skeleton-list">
+            <div v-if="teamStatsLoading && matches.length === 0" class="skeleton-list">
               <div v-for="i in 4" :key="i" class="skeleton-card" style="height: 140px;"></div>
             </div>
             
-            <div v-else-if="!dataLoading && teamStats.length === 0" class="empty-state">
-              <p>No teams found. Ensure you ran the SQL script to insert the initial teams.</p>
+            <div v-else-if="!teamStatsLoading && matches.length === 0" class="empty-state">
+              <p>No matches found. Click Add Match to create one.</p>
             </div>
             
             <div v-else class="reg-list">
-              <div v-for="team in teamStats" :key="team.id" class="reg-card">
-                <div class="reg-header" style="border-bottom: 1px solid var(--border-mid); padding-bottom: 10px; margin-bottom: 14px;">
-                  <span class="reg-name" style="font-size: 18px;">{{ team.name }} FC</span>
-                </div>
+              <div v-for="match in matches" :key="match.id" class="reg-card">
                 
-                <div class="stats-form-grid">
+                <div class="stats-form-grid" style="grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;">
                   <div class="stat-input-group">
-                    <label>PLD (Played)</label>
-                    <input type="number" v-model.number="team.played" min="0" />
+                    <label>Team 1</label>
+                    <select v-model="match.team1" style="width: 100%; padding: 8px; border-radius: 4px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-mid); color: white;">
+                      <option v-for="t in teams" :key="t" :value="t">{{ t }}</option>
+                    </select>
                   </div>
+                  <div style="font-weight: bold; padding-top: 20px;">VS</div>
                   <div class="stat-input-group">
-                    <label>GD (Goal Diff)</label>
-                    <input type="number" v-model.number="team.gd" />
-                  </div>
-                  <div class="stat-input-group">
-                    <label>GF (Goals For)</label>
-                    <input type="number" v-model.number="team.gf" min="0" />
-                  </div>
-                  <div class="stat-input-group">
-                    <label>PTS (Points)</label>
-                    <input type="number" v-model.number="team.pts" min="0" />
+                    <label>Team 2</label>
+                    <select v-model="match.team2" style="width: 100%; padding: 8px; border-radius: 4px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-mid); color: white;">
+                      <option v-for="t in teams" :key="t" :value="t">{{ t }}</option>
+                    </select>
                   </div>
                 </div>
+
+                <div class="stats-form-grid" style="grid-template-columns: 1fr 1fr auto; align-items: center; gap: 8px; margin-top: 10px;">
+                  <div class="stat-input-group">
+                    <label>Score 1</label>
+                    <input type="number" v-model.number="match.score1" min="0" style="padding: 8px;"/>
+                  </div>
+                  <div class="stat-input-group">
+                    <label>Score 2</label>
+                    <input type="number" v-model.number="match.score2" min="0" style="padding: 8px;"/>
+                  </div>
+                  <div class="stat-input-group" style="display: flex; align-items: center; gap: 8px; flex-direction: row; margin-top: 24px;">
+                    <input type="checkbox" v-model="match.is_played" :id="'played-'+match.id" style="width: auto;"/>
+                    <label :for="'played-'+match.id" style="margin: 0;">Match Played</label>
+                  </div>
+                </div>
                 
-                <div class="reg-footer" style="justify-content: flex-end; margin-top: 14px;">
-                  <button @click="saveTeamStat(team)" class="btn-arrive" style="background: rgba(232, 184, 75, 0.1); color: var(--gold); border-color: rgba(232, 184, 75, 0.3);">
-                    Save Stats
+                <div class="reg-footer" style="justify-content: flex-end; margin-top: 14px; gap: 10px;">
+                  <button @click="deleteMatch(match.id)" class="btn-arrive" style="background: rgba(248, 113, 113, 0.1); color: #f87171; border-color: rgba(248, 113, 113, 0.3);">
+                    Delete
+                  </button>
+                  <button @click="saveMatch(match)" class="btn-arrive" style="background: rgba(232, 184, 75, 0.1); color: var(--gold); border-color: rgba(232, 184, 75, 0.3);">
+                    Save Match
                   </button>
                 </div>
               </div>

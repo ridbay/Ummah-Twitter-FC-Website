@@ -39,8 +39,12 @@ create table public.team_stats (
   id          uuid        not null default gen_random_uuid(),
   name        text        not null unique,
   played      integer     not null default 0,
-  gd          integer     not null default 0,
+  w           integer     not null default 0,
+  d           integer     not null default 0,
+  l           integer     not null default 0,
   gf          integer     not null default 0,
+  ga          integer     not null default 0,
+  gd          integer     not null default 0,
   pts         integer     not null default 0,
   updated_at  timestamptz not null default now(),
   constraint team_stats_pkey primary key (id)
@@ -70,3 +74,32 @@ insert into public.team_stats (name) values
   ('Aliy'), 
   ('Umar'), 
   ('Uthman');
+
+-- Table for individual matches
+create table public.matches (
+  id          uuid        not null default gen_random_uuid(),
+  team1       text        not null,
+  team2       text        not null,
+  score1      integer,
+  score2      integer,
+  is_played   boolean     not null default false,
+  match_time  timestamptz,
+  created_at  timestamptz not null default now(),
+  constraint matches_pkey primary key (id)
+);
+
+alter table public.matches enable row level security;
+create policy "public_select_matches" on public.matches for select to anon using (true);
+create policy "public_update_matches" on public.matches for update to anon using (true) with check (true);
+create policy "public_insert_matches" on public.matches for insert to anon with check (true);
+create policy "public_delete_matches" on public.matches for delete to anon using (true);
+alter publication supabase_realtime add table public.matches;
+
+-- Insert Match Results
+insert into public.matches (team1, team2, score1, score2, is_played) values 
+  ('Umar', 'Aliy', 0, 0, true),
+  ('Abubakar', 'Uthman', 1, 1, true),
+  ('Abubakar', 'Umar', 2, 2, true),
+  ('Uthman', 'Aliy', 3, 0, true),
+  ('Abubakar', 'Aliy', 1, 1, true),
+  ('Uthman', 'Umar', 0, 1, true);

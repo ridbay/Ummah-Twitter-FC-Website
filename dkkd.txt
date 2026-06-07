@@ -1,0 +1,10 @@
+
+Develop a new page for League standings, Make it beautiful, interesting and exciting.
+Add the results of all the matches so far, then use it to calculate the league standings.
+use this format: P, W, D, L GF, GA, GD PTS (Use this format for admin and anywhere the table is showing)
+
+Automatically calculate the pts from wins, draws and losses. (3 points for a win, 2 points for a draw, 1 point for a loss)
+
+Automatically calculate the GD from GF and GA.
+
+Show the league standings in the home page, make it beautiful, interesting and exciting.
