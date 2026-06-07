@@ -133,7 +133,7 @@ async function downloadForIG(elementRef, filename) {
             <h3 class="sr-only">League Standings</h3>
             <button @click="downloadForIG(tableCardRef, 'Ummah_FC_Standings')" class="btn-download" :disabled="downloading">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              IG Post
+              Download and share
             </button>
           </div>
           <div class="table-wrapper">
@@ -191,6 +191,7 @@ async function downloadForIG(elementRef, filename) {
               <h3>Recent Results</h3>
               <button @click="downloadForIG(recentCardRef, 'Ummah_FC_Results')" class="btn-download" :disabled="downloading">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download and share
               </button>
             </div>
             <div v-if="recentMatches.length === 0" class="empty-state">
@@ -220,6 +221,7 @@ async function downloadForIG(elementRef, filename) {
               <h3>Top Goal Scorers</h3>
               <button @click="downloadForIG(scorersCardRef, 'Ummah_FC_Scorers')" class="btn-download" :disabled="downloading">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download and share
               </button>
             </div>
             <div class="match-list">
