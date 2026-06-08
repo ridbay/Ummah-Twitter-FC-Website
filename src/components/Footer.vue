@@ -1,3 +1,5 @@
+<script setup>
+</script>
 <template>
   <footer class="footer no-print">
     <div class="container">
@@ -98,8 +100,10 @@
           </a>
           <span class="credit-amp">&amp;</span>
           <a
-            href="mailto:quincysdesign@gmail.com"
+            href="https://www.geekmaros.dev/"
             class="credit-person"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <span class="credit-avatar alt">G</span>
             <span class="credit-name">geekmaros</span>
